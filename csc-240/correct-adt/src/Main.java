@@ -112,6 +112,6 @@ public class Main {
     }
 
     public TextEditorBuffer getEditorBuffer() {
-        return new Text
+        return new TextEditorBufferImplementation();
     }
 }
