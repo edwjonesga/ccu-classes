@@ -1,0 +1,101 @@
+
+Thanks for using JUnit! Support its development at https://junit.org/sponsoring
+
+[36m╷[0m
+[36m├─[0m [36mJUnit Jupiter[0m [32m✔[0m
+[36m│  └─[0m [36mMainTest[0m [32m✔[0m
+[36m│     ├─[0m [31mtestMatrixMultiply3x3()[0m [31m✘[0m [31mMatrix multiplication result incorrect at row 0 ==> array contents differ at index [0], expected: <1.0> but was: <0.0>[0m
+[36m│     ├─[0m [34mtestEmptyArray()[0m [32m✔[0m
+[36m│     ├─[0m [34mtestSimpleSum()[0m [32m✔[0m
+[36m│     ├─[0m [31mtestLargeMergeSort()[0m [31m✘[0m [31mLarge array should be sorted correctly ==> actual array was <null>[0m
+[36m│     ├─[0m [31mtestLargeMatrixMultiply()[0m [31m✘[0m [31mC[0][0] should equal 400.0 ==> expected: <400.0> but was: <0.0>[0m
+[36m│     ├─[0m [31mtestAlreadySorted()[0m [31m✘[0m [31mAlready sorted array should remain unchanged ==> actual array was <null>[0m
+[36m│     └─[0m [31mtestSortArray()[0m [31m✘[0m [31mArray should be sorted ==> actual array was <null>[0m
+[36m└─[0m [36mJUnit Vintage[0m [32m✔[0m
+
+Failures (5):
+  JUnit Jupiter:MainTest:testMatrixMultiply3x3()
+    MethodSource [className = 'MainTest', methodName = 'testMatrixMultiply3x3', methodParameterTypes = '']
+    => org.opentest4j.AssertionFailedError: Matrix multiplication result incorrect at row 0 ==> array contents differ at index [0], expected: <1.0> but was: <0.0>
+       org.junit.jupiter.api.AssertionUtils.fail(AssertionUtils.java:39)
+       org.junit.jupiter.api.AssertArrayEquals.failArraysNotEqual(AssertArrayEquals.java:432)
+       org.junit.jupiter.api.AssertArrayEquals.assertArrayEquals(AssertArrayEquals.java:326)
+       org.junit.jupiter.api.AssertArrayEquals.assertArrayEquals(AssertArrayEquals.java:150)
+       org.junit.jupiter.api.Assertions.assertArrayEquals(Assertions.java:1428)
+       MainTest.testMatrixMultiply3x3(MainTest.java:76)
+       java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+       java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:78)
+       java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+       java.base/java.lang.reflect.Method.invoke(Method.java:567)
+       [...]
+  JUnit Jupiter:MainTest:testLargeMergeSort()
+    MethodSource [className = 'MainTest', methodName = 'testLargeMergeSort', methodParameterTypes = '']
+    => org.opentest4j.AssertionFailedError: Large array should be sorted correctly ==> actual array was <null>
+       org.junit.jupiter.api.AssertionUtils.fail(AssertionUtils.java:39)
+       org.junit.jupiter.api.AssertArrayEquals.failActualArrayIsNull(AssertArrayEquals.java:413)
+       org.junit.jupiter.api.AssertArrayEquals.assertArraysNotNull(AssertArrayEquals.java:404)
+       org.junit.jupiter.api.AssertArrayEquals.assertArrayEquals(AssertArrayEquals.java:239)
+       org.junit.jupiter.api.AssertArrayEquals.assertArrayEquals(AssertArrayEquals.java:90)
+       org.junit.jupiter.api.Assertions.assertArrayEquals(Assertions.java:1286)
+       MainTest.testLargeMergeSort(MainTest.java:90)
+       java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+       java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:78)
+       java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+       [...]
+  JUnit Jupiter:MainTest:testLargeMatrixMultiply()
+    MethodSource [className = 'MainTest', methodName = 'testLargeMatrixMultiply', methodParameterTypes = '']
+    => org.opentest4j.AssertionFailedError: C[0][0] should equal 400.0 ==> expected: <400.0> but was: <0.0>
+       org.junit.jupiter.api.AssertionUtils.fail(AssertionUtils.java:55)
+       org.junit.jupiter.api.AssertionUtils.failNotEqual(AssertionUtils.java:62)
+       org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:86)
+       org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1020)
+       MainTest.testLargeMatrixMultiply(MainTest.java:112)
+       java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+       java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:78)
+       java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+       java.base/java.lang.reflect.Method.invoke(Method.java:567)
+       org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:725)
+       [...]
+  JUnit Jupiter:MainTest:testAlreadySorted()
+    MethodSource [className = 'MainTest', methodName = 'testAlreadySorted', methodParameterTypes = '']
+    => org.opentest4j.AssertionFailedError: Already sorted array should remain unchanged ==> actual array was <null>
+       org.junit.jupiter.api.AssertionUtils.fail(AssertionUtils.java:39)
+       org.junit.jupiter.api.AssertArrayEquals.failActualArrayIsNull(AssertArrayEquals.java:413)
+       org.junit.jupiter.api.AssertArrayEquals.assertArraysNotNull(AssertArrayEquals.java:404)
+       org.junit.jupiter.api.AssertArrayEquals.assertArrayEquals(AssertArrayEquals.java:239)
+       org.junit.jupiter.api.AssertArrayEquals.assertArrayEquals(AssertArrayEquals.java:90)
+       org.junit.jupiter.api.Assertions.assertArrayEquals(Assertions.java:1286)
+       MainTest.testAlreadySorted(MainTest.java:46)
+       java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+       java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:78)
+       java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+       [...]
+  JUnit Jupiter:MainTest:testSortArray()
+    MethodSource [className = 'MainTest', methodName = 'testSortArray', methodParameterTypes = '']
+    => org.opentest4j.AssertionFailedError: Array should be sorted ==> actual array was <null>
+       org.junit.jupiter.api.AssertionUtils.fail(AssertionUtils.java:39)
+       org.junit.jupiter.api.AssertArrayEquals.failActualArrayIsNull(AssertArrayEquals.java:413)
+       org.junit.jupiter.api.AssertArrayEquals.assertArraysNotNull(AssertArrayEquals.java:404)
+       org.junit.jupiter.api.AssertArrayEquals.assertArrayEquals(AssertArrayEquals.java:239)
+       org.junit.jupiter.api.AssertArrayEquals.assertArrayEquals(AssertArrayEquals.java:90)
+       org.junit.jupiter.api.Assertions.assertArrayEquals(Assertions.java:1286)
+       MainTest.testSortArray(MainTest.java:38)
+       java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+       java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:78)
+       java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+       [...]
+
+Test run finished after 174 ms
+[         3 containers found      ]
+[         0 containers skipped    ]
+[         3 containers started    ]
+[         0 containers aborted    ]
+[         3 containers successful ]
+[         0 containers failed     ]
+[         7 tests found           ]
+[         0 tests skipped         ]
+[         7 tests started         ]
+[         0 tests aborted         ]
+[         2 tests successful      ]
+[         5 tests failed          ]
+
