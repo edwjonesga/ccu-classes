@@ -1,8 +1,19 @@
-love this. here’s a clean, classroom-friendly walkthrough you can drop into your LMS or handout. it’s broken into your 8 steps, uses JSON (not YAML), and keeps copy-paste blocks tiny with fill-in-the-blank placeholders.
 
-# 1) Empty shell (basics) — copy/paste, then explain
+# Procrastinot — Hands-On OpenAPI (JSON) Lab
 
-Create `openapi.json` in VS Code and paste:
+You’ll build a small REST API spec (JSON, not YAML) in VS Code, in bite-size steps.
+
+## Prereqs (2 min)
+
+1. Open VS Code → Extensions (Ctrl/Cmd+Shift+X).
+2. Install an OpenAPI/Swagger extension that validates/previews OpenAPI.
+3. Create a file named **`procrastinot.json`** in your repo.
+
+---
+
+## Step 1 — Empty shell (copy-paste)
+
+Paste this as your starting file and replace the `<PLACEHOLDERS>`:
 
 ```json
 {
@@ -20,242 +31,413 @@ Create `openapi.json` in VS Code and paste:
 }
 ```
 
-**Basics to explain (very briefly):**
+**What these mean (super short):**
 
-* `openapi` — spec version.
-* `info` — human metadata.
-* `servers` — where this API lives (dev/prod).
-* `paths` — the endpoints go here.
-* `components` — reusable bits (schemas, responses, etc.).
+* `openapi` → spec version
+* `info` → human metadata
+* `servers` → where the API will run
+* `paths` → endpoints live here
+* `components.schemas` → reusable data shapes
 
 ---
 
-# 2) HTTP action snippets (tiny drop-ins)
+## Step 2 — Create Room (build one endpoint fully)
 
-> Paste **inside** `"paths": { ... }`. Replace `<RESOURCE>` and `<idParam>`.
+We’ll model **rooms**. Start with the **POST /rooms** endpoint and its request/response shapes.
 
-**POST (create)**
+### 2a) Add request/response schemas
+
+Add these **inside** `"components": { "schemas": { ... } }`:
 
 ```json
-"/<RESOURCE>": {
+"CreateRoomRequest": {
+  "type": "object",
+  "required": ["name", "mode"],
+  "properties": {
+    "name": { "type": "string", "minLength": 1, "maxLength": 60 },
+    "mode": { "type": "string", "enum": ["pomodoro", "deep"] }
+  }
+},
+"Room": {
+  "type": "object",
+  "required": ["id", "name", "mode", "inviteCode"],
+  "properties": {
+    "id": { "type": "string" },
+    "name": { "type": "string" },
+    "mode": { "type": "string", "enum": ["pomodoro", "deep"] },
+    "inviteCode": { "type": "string" }
+  }
+},
+"Error": {
+  "type": "object",
+  "required": ["message"],
+  "properties": { "message": { "type": "string" } }
+}
+```
+
+### 2b) Add `POST /rooms` to `paths`
+
+Inside `"paths": { ... }`, add:
+
+```json
+"/rooms": {
   "post": {
-    "summary": "Create <Resource>",
+    "summary": "Create Room",
     "requestBody": {
       "required": true,
-      "content": { "application/json": { "schema": { "$ref": "#/components/schemas/<Resource>" } } }
-    },
-    "responses": { "201": { "description": "Created" }, "400": { "description": "Bad Request" } }
-  }
-}
-```
-
-**GET one (read)**
-
-```json
-"/<RESOURCE>/{<idParam>}": {
-  "get": {
-    "summary": "Get one <Resource>",
-    "parameters": [{ "name": "<idParam>", "in": "path", "required": true, "schema": { "type": "string" } }],
-    "responses": { "200": { "description": "OK" }, "404": { "description": "Not Found" } }
-  }
-}
-```
-
-**GET many (list)**
-
-```json
-"/<RESOURCE>": {
-  "get": {
-    "summary": "List <Resource>",
-    "responses": { "200": { "description": "OK" } }
-  }
-}
-```
-
-**PATCH (partial update)**
-
-```json
-"/<RESOURCE>/{<idParam>}": {
-  "patch": {
-    "summary": "Update <Resource>",
-    "parameters": [{ "name": "<idParam>", "in": "path", "required": true, "schema": { "type": "string" } }],
-    "requestBody": {
-      "required": true,
-      "content": { "application/json": { "schema": { "type": "object" } } }
-    },
-    "responses": { "200": { "description": "Updated" }, "400": { "description": "Bad Request" } }
-  }
-}
-```
-
-**DELETE (remove)**
-
-```json
-"/<RESOURCE>/{<idParam>}": {
-  "delete": {
-    "summary": "Delete <Resource>",
-    "parameters": [{ "name": "<idParam>", "in": "path", "required": true, "schema": { "type": "string" } }],
-    "responses": { "204": { "description": "No Content" }, "404": { "description": "Not Found" } }
-  }
-}
-```
-
----
-
-# 3) Talk through them (what to stress)
-
-* **Nouns, not verbs**: endpoints are resources (`/rooms`), verbs are HTTP methods.
-* **Status codes**: `201` create, `200` read/update, `204` delete, `400/404` errors.
-* **Schemas**: requests/responses should be described in `components/schemas`.
-
----
-
-# 4) First user story (create rooms)
-
-**As a student, I want to create a focus room so I can invite my peers and study together.**
-**Acceptance:** provide a name and mode (`pomodoro` or `deep`), get back an `id` and an `inviteCode`.
-
----
-
-# 5) Copy-paste starter for “Create Room” (with blanks)
-
-Drop this in your shell:
-
-```json
-{
-  "openapi": "3.1.0",
-  "info": { "title": "Study Rooms API", "version": "1.0.0", "description": "Minimal spec for class" },
-  "servers": [ { "url": "http://localhost:3000" } ],
-  "paths": {
-    "/rooms": {
-      "post": {
-        "summary": "Create Room",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/CreateRoomRequest" },
-              "example": { "name": "Algebra Hour", "mode": "pomodoro" }
+      "content": {
+        "application/json": {
+          "schema": { "$ref": "#/components/schemas/CreateRoomRequest" },
+          "examples": {
+            "happyPath": {
+              "summary": "Valid create payload",
+              "value": { "name": "Algebra Hour", "mode": "pomodoro" }
             }
           }
-        },
-        "responses": {
-          "201": {
-            "description": "Room created",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/Room" },
-                "example": { "id": "r_123", "name": "Algebra Hour", "mode": "pomodoro", "inviteCode": "AB12CD" }
+        }
+      }
+    },
+    "responses": {
+      "201": {
+        "description": "Room created",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Room" },
+            "examples": {
+              "happyPath": {
+                "summary": "Typical response",
+                "value": {
+                  "id": "r_123",
+                  "name": "Algebra Hour",
+                  "mode": "pomodoro",
+                  "inviteCode": "AB12CD"
+                }
               }
             }
-          },
-          "400": { "description": "Bad Request" }
+          }
+        }
+      },
+      "400": {
+        "description": "Bad Request",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" },
+            "examples": { "bad": { "value": { "message": "invalid payload" } } }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+✅ You’ve fully described **Create Room**.
+
+---
+
+## Step 3 — Simple **GET** (return a room)
+
+Add this under the **same** `"/rooms/{roomId}"` path object (create it if needed). If you paste separate blocks, remember to **merge** them under the same path key.
+
+```json
+"/rooms/{roomId}": {
+  "get": {
+    "summary": "Get Room",
+    "parameters": [
+      { "name": "roomId", "in": "path", "required": true, "schema": { "type": "string" } }
+    ],
+    "responses": {
+      "200": {
+        "description": "OK",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Room" },
+            "examples": {
+              "happyPath": {
+                "summary": "Typical room",
+                "value": {
+                  "id": "r_123",
+                  "name": "Algebra Hour",
+                  "mode": "pomodoro",
+                  "inviteCode": "AB12CD"
+                }
+              }
+            }
+          }
+        }
+      },
+      "404": {
+        "description": "Not Found",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" },
+            "examples": { "nf": { "value": { "message": "roomId not found" } } }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+---
+
+## Step 4 — Simple **PATCH** (update room name/mode)
+
+Add a small update schema in `components.schemas`:
+
+```json
+"UpdateRoomRequest": {
+  "type": "object",
+  "properties": {
+    "name": { "type": "string", "minLength": 1, "maxLength": 60 },
+    "mode": { "type": "string", "enum": ["pomodoro", "deep"] }
+  },
+  "additionalProperties": false
+}
+```
+
+Then add the endpoint under `"/rooms/{roomId}"` (merge with GET):
+
+```json
+"patch": {
+  "summary": "Update Room",
+  "description": "Change name and/or mode.",
+  "parameters": [
+    { "name": "roomId", "in": "path", "required": true, "schema": { "type": "string" } }
+  ],
+  "requestBody": {
+    "required": true,
+    "content": {
+      "application/json": {
+        "schema": { "$ref": "#/components/schemas/UpdateRoomRequest" },
+        "examples": {
+          "rename": { "value": { "name": "Geometry Jam" } },
+          "toggle": { "value": { "mode": "deep" } }
         }
       }
     }
   },
-  "components": {
-    "schemas": {
-      "CreateRoomRequest": {
-        "type": "object",
-        "required": ["name", "mode"],
-        "properties": {
-          "name": { "type": "string", "minLength": 1, "maxLength": 60 },
-          "mode": { "type": "string", "enum": ["pomodoro", "deep"] }
+  "responses": {
+    "200": {
+      "description": "Updated",
+      "content": {
+        "application/json": {
+          "schema": { "$ref": "#/components/schemas/Room" },
+          "examples": {
+            "afterRename": {
+              "value": { "id": "r_123", "name": "Geometry Jam", "mode": "pomodoro", "inviteCode": "AB12CD" }
+            }
+          }
         }
-      },
-      "Room": {
-        "type": "object",
-        "required": ["id", "name", "mode", "inviteCode"],
-        "properties": {
-          "id": { "type": "string" },
-          "name": { "type": "string" },
-          "mode": { "type": "string", "enum": ["pomodoro", "deep"] },
-          "inviteCode": { "type": "string" }
-        }
+      }
+    },
+    "400": {
+      "description": "Bad Request",
+      "content": {
+        "application/json": { "schema": { "$ref": "#/components/schemas/Error" } }
+      }
+    },
+    "404": {
+      "description": "Not Found",
+      "content": {
+        "application/json": { "schema": { "$ref": "#/components/schemas/Error" } }
       }
     }
   }
 }
 ```
 
-**Student TODOs:**
+---
 
-* Make up your own examples (change `name`, try `deep`).
-* Add a validation rule you care about (e.g., max 40 chars).
-* Explain why this returns **201** instead of **200**.
+## Step 5 — Simple **DELETE** (remove a room)
+
+Add under `"/rooms/{roomId}"` (merge with GET/PATCH):
+
+```json
+"delete": {
+  "summary": "Delete Room",
+  "parameters": [
+    { "name": "roomId", "in": "path", "required": true, "schema": { "type": "string" } }
+  ],
+  "responses": {
+    "204": { "description": "No Content" },
+    "404": {
+      "description": "Not Found",
+      "content": {
+        "application/json": { "schema": { "$ref": "#/components/schemas/Error" } }
+      }
+    }
+  }
+}
+```
+
+> Teaching beat: **201** for create, **200** for read/update success with body, **204** for delete success without body, **4xx** for client errors.
 
 ---
 
-# 6) List & CRUD for rooms (lighter guidance)
+## Step 6 — (Optional) List Rooms, briefly
 
-Add endpoints for:
+Add a minimal summary now; you can flesh it out later with a `RoomSummary` array.
 
-* **List all rooms**: `GET /rooms` → `200` with an array of `RoomSummary`.
-* **Get one**: `GET /rooms/{roomId}` → `200` with `Room`.
-* **Update**: `PATCH /rooms/{roomId}` → allow changing `name` or `mode`.
-* **Delete**: `DELETE /rooms/{roomId}` → `204`.
-
-Hints (don’t fully spoon-feed):
-
-* Create a `RoomSummary` schema with fewer fields than `Room`.
-* For `PATCH`, define a tiny schema with **optional** `name` and `mode`.
-* Error responses: at least `404` for unknown `roomId`.
-
----
-
-# 7) “Join a room” — subtle direction, not the answer
-
-**Goal:** “As a student, I want to join an existing room by invite code.”
-
-Two common designs—pick one and implement:
-
-* **Resource-oriented (more RESTy)**
-  *Hint:* treat a membership as a new resource under the room.
-  – Where would you `POST` or `PUT`?
-  – What path would include the **user**?
-  – What status should repeat joins return (idempotency)?
-
-* **Action-ish (pragmatic)**
-  *Hint:* a one-off action hanging off the room path.
-  – What verb (POST/PATCH) best matches “performing an action”?
-  – Where does the `inviteCode` live—in the body or the path?
-
-Don’t forget: on **success**, what should the response body include so the UI can immediately show **participants**?
+```json
+"/rooms": {
+  "get": {
+    "summary": "List Rooms",
+    "responses": { "200": { "description": "OK" } }
+  },
+  "post": { ... Create Room from Step 2 ... }
+}
+```
 
 ---
 
-# 8) Remaining assignments — trimmed user stories
+## Step 7 — Actions: small example (room state update)
 
-Follow the patterns above and design endpoints (no full answers here):
+Sometimes you need **state transitions** that aren’t simple CRUD. Two patterns:
 
-1. **Rename Room**
-   *As an owner, I want to rename my room.*
-   *Acceptance:* valid non-empty name updates successfully; invalid names get `400`.
+### A) REST-y state patch (recommended)
 
-2. **Toggle Mode**
-   *As an owner, I want to switch between Pomodoro and Deep Study.*
-   *Acceptance:* changing `mode` updates the room and is visible on subsequent `GET`.
+Create a sub-resource `session` you can **PATCH**:
 
-3. **Leave Room**
+**Schemas (add to components.schemas):**
+
+```json
+"Session": {
+  "type": "object",
+  "properties": {
+    "state": { "type": "string", "enum": ["idle", "running", "break"] },
+    "startedAt": { "type": "string", "format": "date-time", "nullable": true },
+    "durationSec": { "type": "integer", "nullable": true }
+  }
+},
+"UpdateSessionRequest": {
+  "type": "object",
+  "oneOf": [
+    {
+      "description": "Start a work session",
+      "required": ["action", "durationSec"],
+      "properties": {
+        "action": { "type": "string", "enum": ["startWork"] },
+        "durationSec": { "type": "integer", "minimum": 60 }
+      }
+    },
+    {
+      "description": "Stop session",
+      "required": ["action"],
+      "properties": { "action": { "type": "string", "enum": ["stop"] } }
+    }
+  ]
+}
+```
+
+**Endpoint (add under `paths`):**
+
+```json
+"/rooms/{roomId}/session": {
+  "patch": {
+    "summary": "Update Room Session (action via PATCH)",
+    "parameters": [
+      { "name": "roomId", "in": "path", "required": true, "schema": { "type": "string" } }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": { "$ref": "#/components/schemas/UpdateSessionRequest" },
+          "examples": {
+            "start": { "value": { "action": "startWork", "durationSec": 1500 } },
+            "stop": { "value": { "action": "stop" } }
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "Session state",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Session" },
+            "examples": {
+              "running": {
+                "value": { "state": "running", "startedAt": "2025-09-04T16:00:00Z", "durationSec": 1500 }
+              }
+            }
+          }
+        }
+      },
+      "400": { "description": "Bad Request" },
+      "404": { "description": "Not Found" },
+      "409": { "description": "Invalid state transition" }
+    }
+  }
+}
+```
+
+### B) Action-ish method (optional to discuss)
+
+Some APIs use custom methods like `POST /rooms/{roomId}:start`. This is pragmatic, but less resource-oriented. Use it sparingly for teaching best practices.
+
+---
+
+## What to do next (student instructions)
+
+### Part 1 — Finish the Room basics
+
+* Ensure your spec includes:
+
+  * `POST /rooms` (201 with `Room`)
+  * `GET /rooms/{roomId}` (200 with `Room`, 404 error body)
+  * `PATCH /rooms/{roomId}` (200 with `Room`, 400/404)
+  * `DELETE /rooms/{roomId}` (204, 404)
+  * `GET /rooms` (200 with a list you define later)
+* Validate your spec (no JSON errors, no duplicate path keys).
+
+### Part 2 — Add the Action example
+
+* Add **either** the REST-y `PATCH /rooms/{roomId}/session` from Step 7 **or** propose your own state action.
+* Include at least **one** example for request and response.
+
+### Part 3 — Take-home user stories (design the endpoints)
+
+Design your endpoints (paths, methods, basic schemas, status codes). You don’t have to fully implement every response schema—focus on clean resource design, parameters, and the right HTTP semantics.
+
+1. **Join a Room**
+   *As a student, I want to join an existing room using an invite code.*
+   **Hint A (resource-oriented):** create a membership resource under the room; consider **idempotency** (first join 201, repeat 204).
+   **Hint B (action-ish):** `POST` with `{ inviteCode }` in the body; decide what 4xx to return for a bad/expired code.
+
+2. **Leave a Room**
    *As a participant, I want to leave a room so I no longer appear in the list.*
-   *Acceptance:* leaving succeeds with `204`; subsequent participant list excludes me.
+   **Hint:** delete your membership; respond **204**.
 
-4. **See Participants**
-   *As a participant, I want to view who’s in the room.*
-   *Acceptance:* `GET` returns an array of participants with names.
+3. **List Participants**
+   *As a participant, I want to see who’s in the room.*
+   **Hint:** a `GET` that returns an array (decide minimal fields: `uid`, `displayName`).
 
-5. **Start/Stop Session (timer)**
-   *As an owner, I want to start/stop a study session so everyone sees the same timer.*
-   *Acceptance:* starting sets a start time + duration; stopping clears or resets.
-   *Design prompt:* would you “patch room state” or “create a separate `session` resource”? Why?
+4. **See Current Session Details**
+   *As a participant, I want to see the current mode/timer.*
+   **Hint:** reuse your `Session` schema or define a small read-only projection.
 
-**Rubric ideas for grading:**
+5. **(Optional) Start Break**
+   *As an owner, I want to switch the session to a short break.*
+   **Hint:** another action/state transition—extend `UpdateSessionRequest` or add a second method.
 
-* Correct use of HTTP methods/status codes.
-* Clear, reusable schemas under `components/schemas`.
-* Consistent naming (`rooms`, `roomId`, `participants`).
-* At least one example per request/response.
-* Thoughtful error responses (`400`, `404`).
+**Grading ideas (rubric):**
 
-If you want, I can bundle this into a single `openapi.json` with TODO comments removed and just placeholders, so students don’t fight the linter.
+* Correct method/status code choices (201/200/204/4xx).
+* Clean resource naming (`rooms`, `roomId`, `participants`).
+* Reusable schemas (`Room`, `Error`, etc.).
+* At least one **example** per request/response where applicable.
+* Clear justifications for action vs resource modeling.
+
+### Validation & Types (optional but recommended)
+
+```bash
+npx @redocly/cli lint procrastinot.json
+npx openapi-typescript procrastinot.json -o api-types.d.ts
+```
+
+---
+
+If you want, I can bundle this into a ready-to-ship **starter `procrastinot.json`** that includes the Create/GET/PATCH/DELETE examples above plus the session action endpoint, with TODO markers for the take-home stories.
