@@ -93,14 +93,53 @@ After the initialization is complete, you will have a new directory containing y
     ./startContainer.sh
     ```
 
-You will now be inside your development container, with all the necessary tools and your repository files mounted in the `/workspace` directory. Happy coding!
+You will now be inside your development container, with all the necessary tools and your repository files mounted in the `/workspace` directory.
 
-## Keeping Your Repository Up-to-Date
+### Included Development Tools
 
-Your instructor may push updates to the class repository from time to time. To get these updates into your own repository, you can use the `pull-updates.sh` script.
+Your development environment comes pre-installed with the following tools:
 
-From within your development container, simply run:
-```sh
-pull-updates.sh
-```
-This will pull the latest changes from the class repository. If there are any changes to the `Dockerfile`, you will need to rebuild and restart your development container by running `./buildContainer.sh` and then `./startContainer.sh` again.
+*   **Java Development Kit (OpenJDK 16):** The standard Java compiler (`javac`) and runtime (`java`).
+*   **JUnit 5:** A widely-used testing framework for Java. You can run tests using the `run-tests.sh` script.
+*   **JavaCC (Java Compiler Compiler):** A parser generator for Java.
+*   **ASM:** A Java bytecode manipulation and analysis framework.
+
+All necessary JAR files are included in the `CLASSPATH`, so you can use these tools directly.
+
+### Available Helper Scripts
+
+A set of scripts is available in the `/bin` directory of the container to help you with common tasks. Since `/bin` is in your `PATH`, you can run them from anywhere in the workspace.
+
+*   `compile.sh`: Compiles all `.java` files found in the `src` and `test` directories of your current location.
+*   `run-tests.sh`: Executes all JUnit tests in the current directory and saves the results to `test-results.txt`.
+*   `run-all-tests.sh`: A powerful script that iterates through all assignment directories in your workspace, compiles the code, and runs the tests for each one.
+*   `prepare_to_submit.sh`: Runs the tests and, if they pass, creates a `Assignment.zip` file ready for submission.
+*   `refresh-assignment-files.sh`: Refreshes an assignment directory with the original files from the class repository.
+*   `pull-updates.sh`: Fetches updates from the main class repository and merges them into your current branch. This is useful for getting updates from your instructor.
+*   `update-docker.sh`: Downloads the latest version of the development `Dockerfile`. After running this, you will need to exit the container and run `./buildContainer.sh` again to apply the changes.
+
+### Importing Existing Work
+
+If you have already started working on an assignment on your local machine (outside of this Docker environment), you can easily import your work.
+
+For example, let's say you have an assignment in a local directory named `~/projects/tokenizers-assemble` and your new repository from Stage 1 is at `~/csc385/my-csc385-repo`. The `tokenizers-assemble` assignment folder should already exist inside your repository.
+
+1.  **Navigate to your repository on your local machine:**
+    ```sh
+    cd ~/csc385/my-csc385-repo
+    ```
+2.  **Copy your existing work into the corresponding assignment directory.** Make sure you copy the contents, not the folder itself.
+    ```sh
+    # Example for Linux/macOS
+    cp -r ~/projects/tokenizers-assemble/* ./tokenizers-assemble/
+
+    # Example for Windows (in PowerShell)
+    Copy-Item -Recurse -Path ~/projects/tokenizers-assemble/* -Destination ./tokenizers-assemble/
+    ```
+3.  **Start the container** (`./startContainer.sh`) and your files will be there, ready to be compiled and tested.
+
+If an assignment directory does not exist in your repository, you can use the `refresh-assignment-files.sh` script inside the container to download it first.
+
+---
+
+Happy coding!

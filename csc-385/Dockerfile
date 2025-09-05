@@ -1,17 +1,58 @@
-FROM ubuntu:22.04
+# Use the official OpenJDK image as the base image
+FROM openjdk:16-jdk-buster
+
+# Set the maintainer label
+LABEL maintainer="edwjones@ccu.edu"
 
 # Avoid interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
-ENV PATH="/workspace/bin:${PATH}"
 
-# Install dependencies and GitHub CLI (gh)
-RUN apt-get update && apt-get install -y git curl ca-certificates wget \
+# Install dependencies: git, curl, wget, zip, unzip, jq, and GitHub CLI (gh)
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    ca-certificates \
+    wget \
+    zip \
+    unzip \
+    jq \
     && mkdir -p -m 755 /etc/apt/keyrings \
     && wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
     && chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
     && apt-get update \
-    && apt-get install -y gh
+    && apt-get install -y gh \
+    && apt-get clean
+
+# Create necessary directories
+RUN mkdir -p /workspace /bin /opt/junit /opt/javacc /opt/asm
+
+# Set the working directory inside the container
+WORKDIR /workspace
+
+# Install JUnit
+RUN wget -O /opt/junit/junit-platform-console-standalone.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.8.2/junit-platform-console-standalone-1.8.2.jar
+
+# Install JavaCC
+RUN wget https://github.com/javacc/javacc/releases/download/7.0.12/javacc-7.0.12.zip -P /tmp \
+    && unzip /tmp/javacc-7.0.12.zip -d /opt/javacc \
+    && rm /tmp/javacc-7.0.12.zip
+
+# Install ASM
+RUN wget https://repo1.maven.org/maven2/org/ow2/asm/asm/9.6/asm-9.6.jar -P /opt/asm \
+    && wget https://repo1.maven.org/maven2/org/ow2/asm/asm-commons/9.6/asm-commons-9.6.jar -P /opt/asm \
+    && wget https://repo1.maven.org/maven2/org/ow2/asm/asm-util/9.6/asm-util-9.6.jar -P /opt/asm \
+    && wget https://repo1.maven.org/maven2/org/ow2/asm/asm-tree/9.6/asm-tree-9.6.jar -P /opt/asm
+
+# Set CLASSPATH to include JUnit, JavaCC, ASM and current directory
+ENV CLASSPATH="/opt/junit/junit-platform-console-standalone.jar:/opt/javacc/javacc-7.0.12/bootstrap/javacc.jar:/opt/javacc/javacc-7.0.12/bootstrap/jjtree.jar:/opt/asm/asm-9.6.jar:/opt/asm/asm-commons-9.6.jar:/opt/asm/asm-util-9.6.jar:/opt/asm/asm-tree-9.6.jar:."
+
+# Copy helper scripts and make them executable
+COPY bin/ /bin/
+RUN chmod +x /bin/*
+
+# Add bin directory to PATH
+ENV PATH="/bin:${PATH}"
 
 # Create the init.sh script
 RUN echo '#!/bin/bash' > /usr/local/bin/init.sh && \
@@ -157,5 +198,5 @@ RUN echo '#!/bin/bash' > /usr/local/bin/init.sh && \
 # Make the script executable
 RUN chmod +x /usr/local/bin/init.sh
 
-# Set the default command to run the script
-CMD ["/bin/bash"]
+# Default command to start a bash shell in the container
+CMD ["bash"]
