@@ -1,5 +1,5 @@
 # Use the official OpenJDK image as the base image
-FROM openjdk:16-jdk-buster
+FROM openjdk:16-jdk-bullseye
 
 
 # Set the maintainer label
@@ -8,16 +8,21 @@ LABEL maintainer="edwjones@ccu.edu"
 # Create necessary directories
 RUN mkdir -p /workspace /bin /opt/junit
 
-# Install required utilities: zip, unzip, wget, curl, git, and jq
-RUN apt-get update && apt-get install -y zip unzip wget curl git jq rsync nano
+# Install required utilities and download JUnit
+RUN apt-get update && apt-get install -y \
+    zip \
+    unzip \
+    wget \
+    curl \
+    git \
+    jq \
+    rsync \
+    nano && \
+    wget -O /opt/junit/junit-platform-console-standalone.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.8.2/junit-platform-console-standalone-1.8.2.jar && \
+    apt-get clean
 
 # Set the working directory inside the container
 WORKDIR /workspace
-
-# Install necessary packages and download JUnit
-RUN apt-get update && apt-get install -y wget unzip && \
-    wget -O /opt/junit/junit-platform-console-standalone.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.8.2/junit-platform-console-standalone-1.8.2.jar && \
-    apt-get clean
 
 # Set CLASSPATH to include JUnit and current directory
 ENV CLASSPATH="/opt/junit/junit-platform-console-standalone.jar:."
