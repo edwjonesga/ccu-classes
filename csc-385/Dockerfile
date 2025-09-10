@@ -1,24 +1,25 @@
+# Use the official OpenJDK image as the base image
 FROM openjdk:16-jdk-buster
 
-# Avoid interactive prompts
-ENV DEBIAN_FRONTEND=noninteractive
-ENV PATH="/workspace/bin:${PATH}"
 
-# Set the working directory
+# Set the maintainer label
+LABEL maintainer="edwjones@ccu.edu"
+
+# Create necessary directories
+RUN mkdir -p /workspace /bin /opt/junit
+
+# Install required utilities: zip, unzip, wget, curl, git, and jq
+RUN apt-get update && apt-get install -y zip unzip wget curl git jq rsync nano
+
+# Set the working directory inside the container
 WORKDIR /workspace
 
-# Install dependencies and GitHub CLI (gh)
-RUN apt-get update && apt-get install -y zip unzip jq git curl ca-certificates wget rsync nano \
-    && mkdir -p -m 755 /etc/apt/keyrings \
-    && wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
-    && chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
-    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
-    && apt-get update \
-    && apt-get install -y gh
+# Install necessary packages and download JUnit
+RUN apt-get update && apt-get install -y wget unzip && \
+    wget -O /opt/junit/junit-platform-console-standalone.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.8.2/junit-platform-console-standalone-1.8.2.jar && \
+    apt-get clean
 
-# Create necessary directories for JUnit and set CLASSPATH
-RUN mkdir -p /opt/junit
-RUN wget -O /opt/junit/junit-platform-console-standalone.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.8.2/junit-platform-console-standalone-1.8.2.jar
+# Set CLASSPATH to include JUnit and current directory
 ENV CLASSPATH="/opt/junit/junit-platform-console-standalone.jar:."
 
 # Copy local scripts to the container and make them executable
