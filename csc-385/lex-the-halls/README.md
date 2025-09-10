@@ -20,7 +20,7 @@ Using **JavaCC**, you will define a `.jj` grammar file that can tokenize code sn
 Your lexer must recognize the following:
 
 ### ✅ Keywords
-- `if`, `else`, `while`, `for`, `int`, `print`
+- `if`, `else`, `while`, `for`, `int`
 
 ### ✅ Identifiers
 - A sequence of letters (a–z, A–Z) and digits (0–9), starting with a letter
