@@ -1,5 +1,6 @@
 -- Creating the database
 CREATE DATABASE IF NOT EXISTS exampledb; 
+USE exampledb;
 CREATE TABLE IF NOT EXISTS employees (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100),
