@@ -23,7 +23,7 @@ If you don't already have Docker installed, please follow the instructions for y
 
 Download the `Dockerfile` from this repository and place it in a new, empty directory on your computer.
 
-[**Click here to download the Dockerfile**](https://raw.githubusercontent.com/edwjonesga/egi-330/main/Dockerfile)
+[**Click here to download the Dockerfile**](https://raw.githubusercontent.com/edwjonesga/ccu-classes/main/egi-330/Dockerfile)
 
 Make sure the downloaded file is named `Dockerfile` with no file extension.
 

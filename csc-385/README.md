@@ -10,7 +10,7 @@ This first stage will set up your GitHub repository and clone it to your local m
 
 First, you need to download the `Dockerfile` for the initialization process.
 
-[Download the Dockerfile here](https://raw.githubusercontent.com/edwjonesga/edwjones-ccu/main/classes/csc-385/Dockerfile)
+[Download the Dockerfile here](https://raw.githubusercontent.com/edwjonesga/ccu-classes/main/csc-385/Dockerfile)
 
 Save this file in a new, empty directory on your computer. Make sure the file is named `Dockerfile` with no extension.
 
@@ -67,10 +67,19 @@ This step will create your personal GitHub repository for this class and clone i
     ```
 
 4.  Run the initializer container, mounting your current directory into the container's `/workspace`:
-
-    ```sh
-    docker run -it --rm -v "$(pwd)":/workspace csc-385-init-env
-    ```
+    - **For Linux and Mac:**
+      ```sh
+      docker run -it --rm -v "$(pwd)":/workspace csc-385-init-env
+      ```
+    - **For Windows (using PowerShell):**
+      ```sh
+      docker run -it --rm -v "${PWD}:/workspace" csc-385-init-env
+      ```
+    - **For Windows (using Command Prompt):**
+      ```sh
+      docker run -it --rm -v "%cd%":/workspace csc-385-init-env
+      ```
+    > **Note for Linux Users:** You may need to run this command with `sudo`.
 
 5.  The container will run the `init.sh` script, which will guide you through the GitHub setup process. At the end, it will clone your new repository into the directory you are in and then exit.
 
@@ -92,6 +101,7 @@ After the initialization is complete, you will have a new directory containing y
     ```sh
     ./startContainer.sh
     ```
+    > **Note for Windows Users:** `/startContainer.sh` will not work so instead copy the same `docker run` command from step 4
 
 You will now be inside your development container, with all the necessary tools and your repository files mounted in the `/workspace` directory. Happy coding!
 
