@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM openjdk:16-jdk-buster
 
 # Avoid interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
@@ -8,13 +8,22 @@ ENV PATH="/workspace/bin:${PATH}"
 WORKDIR /workspace
 
 # Install dependencies and GitHub CLI (gh)
-RUN apt-get update && apt-get install -y git curl ca-certificates wget rsync \
+RUN apt-get update && apt-get install -y zip unzip jq git curl ca-certificates wget rsync \
     && mkdir -p -m 755 /etc/apt/keyrings \
     && wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
     && chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
     && apt-get update \
     && apt-get install -y gh
+
+# Create necessary directories for JUnit and set CLASSPATH
+RUN mkdir -p /opt/junit
+RUN wget -O /opt/junit/junit-platform-console-standalone.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.8.2/junit-platform-console-standalone-1.8.2.jar
+ENV CLASSPATH="/opt/junit/junit-platform-console-standalone.jar:."
+
+# Copy local scripts to the container and make them executable
+COPY bin/ /workspace/bin/
+RUN chmod +x /workspace/bin/*.sh
 
 # Create the init.sh script
 RUN echo '#!/bin/bash' > /usr/local/bin/init.sh && \
