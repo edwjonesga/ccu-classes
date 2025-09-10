@@ -1,0 +1,31 @@
+options {
+  STATIC = false;
+}
+
+PARSER_BEGIN(MyParser)
+
+public class MyParser {
+    public static void main(String[] args) throws ParseException {
+        MyParser parser = new MyParser(System.in);
+        parser.Start();
+        System.out.println("Parsing completed.");
+    }
+}
+
+PARSER_END(MyParser)
+
+// Whitespace to skip (add more here)
+SKIP : {
+    " " 
+}
+
+
+// Your real tokens go below this line (to be filled in by students)
+// For example:
+// TOKEN : { < IF: "if" > }
+
+void Start() : {}
+{
+    // Basic stub to let the parser run. You’ll replace this.
+    <EOF>
+}
