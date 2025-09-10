@@ -27,9 +27,6 @@ WORKDIR /workspace
 # Set CLASSPATH to include JUnit and current directory
 ENV CLASSPATH="/opt/junit/junit-platform-console-standalone.jar:."
 
-# Copy local scripts to the container and make them executable
-COPY bin/ /workspace/bin/
-RUN chmod +x /workspace/bin/*.sh
 
 # Add the bin directory to the PATH
 ENV PATH="/workspace/bin:${PATH}"
