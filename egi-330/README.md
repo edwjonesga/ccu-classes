@@ -69,6 +69,8 @@ Now you can start your development session. From this point onwards, you can use
 ```
 > **Note for Linux Users:** If you get a `permission denied` error, you may need to run this with `sudo`: `sudo ./startContainer.sh`.
 
+> **Note for Windows Users:** `/startContainer.sh` will not work so instead copy the same `docker run` command from step 5
+
 ### Step 7: Authenticate with GitHub
 
 Before you can push your code, you need to perform a one-time authentication with GitHub from inside the container.
