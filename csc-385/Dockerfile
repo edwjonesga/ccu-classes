@@ -31,6 +31,9 @@ ENV CLASSPATH="/opt/junit/junit-platform-console-standalone.jar:."
 COPY bin/ /workspace/bin/
 RUN chmod +x /workspace/bin/*.sh
 
+# Add the bin directory to the PATH
+ENV PATH="/workspace/bin:${PATH}"
+
 # Create the init.sh script
 RUN echo '#!/bin/bash' > /usr/local/bin/init.sh && \
     echo '' >> /usr/local/bin/init.sh && \
