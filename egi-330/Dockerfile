@@ -26,7 +26,7 @@ RUN echo '#!/bin/bash' > /usr/local/bin/init.sh && \
     echo '' >> /usr/local/bin/init.sh && \
     echo '# Clone the source repository' >> /usr/local/bin/init.sh && \
     echo 'echo "Cloning the source repository into a temporary directory..."' >> /usr/local/bin/init.sh && \
-    echo 'git clone https://github.com/edwjonesga/egi-330.git /tmp/egi-330-source' >> /usr/local/bin/init.sh && \
+    echo 'git clone https://github.com/edwjonesga/ccu-classes.git /tmp/ccu-classes-source' >> /usr/local/bin/init.sh && \
     echo 'if [ $? -ne 0 ]; then' >> /usr/local/bin/init.sh && \
     echo '    echo "Failed to clone the source repository. Aborting."' >> /usr/local/bin/init.sh && \
     echo '    exit 1' >> /usr/local/bin/init.sh && \
@@ -34,7 +34,7 @@ RUN echo '#!/bin/bash' > /usr/local/bin/init.sh && \
     echo '' >> /usr/local/bin/init.sh && \
     echo '# Copy files to the workspace' >> /usr/local/bin/init.sh && \
     echo 'echo "Copying project files into your workspace..."' >> /usr/local/bin/init.sh && \
-    echo 'cp -r /tmp/egi-330-source/* /workspace/' >> /usr/local/bin/init.sh && \
+    echo 'cp -r /tmp/ccu-classes-source/egi-330/* /workspace/' >> /usr/local/bin/init.sh && \
     echo '' >> /usr/local/bin/init.sh && \
     echo '# Initialize a new git repository' >> /usr/local/bin/init.sh && \
     echo 'echo "Initializing a new git repository..."' >> /usr/local/bin/init.sh && \
@@ -62,7 +62,7 @@ RUN echo '#!/bin/bash' > /usr/local/bin/init.sh && \
     echo '' >> /usr/local/bin/init.sh && \
     echo '# Clean up' >> /usr/local/bin/init.sh && \
     echo 'echo "Cleaning up temporary files..."' >> /usr/local/bin/init.sh && \
-    echo 'rm -rf /tmp/egi-330-source' >> /usr/local/bin/init.sh && \
+    echo 'rm -rf /tmp/ccu-classes-source' >> /usr/local/bin/init.sh && \
     echo '' >> /usr/local/bin/init.sh && \
     echo 'echo "----------------------------------------------------"' >> /usr/local/bin/init.sh && \
     echo 'echo "Initialization complete!"' >> /usr/local/bin/init.sh && \
