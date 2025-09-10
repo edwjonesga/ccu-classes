@@ -53,14 +53,14 @@ RUN echo '#!/bin/bash' > /usr/local/bin/init.sh && \
     echo '    rm -rf /tmp/edwjones-ccu' >> /usr/local/bin/init.sh && \
     echo 'fi' >> /usr/local/bin/init.sh && \
     echo 'echo "Cloning the main class repository..."' >> /usr/local/bin/init.sh && \
-    echo 'git clone https://github.com/edwjonesga/edwjones-ccu.git /tmp/edwjones-ccu' >> /usr/local/bin/init.sh && \
+    echo 'git clone https://github.com/edwjonesga/ccu-classes.git /tmp/edwjones-ccu' >> /usr/local/bin/init.sh && \
     echo 'if [ $? -ne 0 ]; then' >> /usr/local/bin/init.sh && \
     echo '    echo "Failed to clone the repository. Please check your internet connection."' >> /usr/local/bin/init.sh && \
     echo '    exit 1' >> /usr/local/bin/init.sh && \
     echo 'fi' >> /usr/local/bin/init.sh && \
     echo 'echo "Repository cloned successfully."' >> /usr/local/bin/init.sh && \
-    echo 'echo "DEBUG: Listing contents of /tmp/edwjones-ccu/classes/"' >> /usr/local/bin/init.sh && \
-    echo 'ls -l /tmp/edwjones-ccu/classes/' >> /usr/local/bin/init.sh && \
+    echo 'echo "DEBUG: Listing contents of /tmp/edwjones-ccu/"' >> /usr/local/bin/init.sh && \
+    echo 'ls -l /tmp/edwjones-ccu/' >> /usr/local/bin/init.sh && \
     echo 'echo ""' >> /usr/local/bin/init.sh && \
     echo '# --- Create a new repository on user'\''s GitHub ---' >> /usr/local/bin/init.sh && \
     echo 'echo "--- Step 4: Create Your Own Repository ---"' >> /usr/local/bin/init.sh && \
@@ -96,7 +96,7 @@ RUN echo '#!/bin/bash' > /usr/local/bin/init.sh && \
     echo '# --- Push the code to the new repository ---' >> /usr/local/bin/init.sh && \
     echo 'echo "--- Step 5: Pushing the Code ---"' >> /usr/local/bin/init.sh && \
     echo 'echo "Preparing to push the class files to your new repository..."' >> /usr/local/bin/init.sh && \
-    echo 'cd /tmp/edwjones-ccu/classes/csc-385' >> /usr/local/bin/init.sh && \
+    echo 'cd /tmp/edwjones-ccu/csc-385' >> /usr/local/bin/init.sh && \
     echo 'if [ $? -ne 0 ]; then' >> /usr/local/bin/init.sh && \
     echo '    echo "Failed to change directory. The directory structure of the repository might have changed."' >> /usr/local/bin/init.sh && \
     echo '    echo "Please contact your instructor."' >> /usr/local/bin/init.sh && \
@@ -120,7 +120,7 @@ RUN echo '#!/bin/bash' > /usr/local/bin/init.sh && \
     echo '# --- Set up the upstream remote ---' >> /usr/local/bin/init.sh && \
     echo 'echo "--- Step 6: Setting Up for Future Updates ---"' >> /usr/local/bin/init.sh && \
     echo 'echo "Configuring the '\''upstream'\'' remote to receive updates from the class repository..."' >> /usr/local/bin/init.sh && \
-    echo 'git remote add upstream https://github.com/edwjonesga/edwjones-ccu.git' >> /usr/local/bin/init.sh && \
+    echo 'git remote add upstream https://github.com/edwjonesga/ccu-classes.git' >> /usr/local/bin/init.sh && \
     echo 'echo "'\''upstream'\'' remote configured."' >> /usr/local/bin/init.sh && \
     echo 'echo ""' >> /usr/local/bin/init.sh && \
     echo '# --- Clone student'\''s new repository to workspace ---' >> /usr/local/bin/init.sh && \

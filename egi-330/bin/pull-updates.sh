@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Define the source repository URL
-SOURCE_REPO="https://github.com/edwjonesga/egi-330.git"
-TEMP_DIR="/tmp/egi-330-latest"
+SOURCE_REPO="https://github.com/edwjonesga/ccu-classes.git"
+TEMP_DIR="/tmp/ccu-classes-latest"
 
 echo "Switching to the source-update-branch..."
 git checkout source-update-branch
@@ -25,7 +25,7 @@ fi
 
 echo "Copying updated files into the branch..."
 # Use rsync to copy files, which is efficient
-rsync -av --exclude='.git/' "$TEMP_DIR/" .
+rsync -av --exclude='.git/' "$TEMP_DIR/egi-330/" .
 if [ $? -ne 0 ]; then
     echo "Failed to copy updated files. Aborting."
     git checkout main
