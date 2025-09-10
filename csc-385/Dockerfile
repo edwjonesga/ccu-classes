@@ -8,7 +8,7 @@ ENV PATH="/workspace/bin:${PATH}"
 WORKDIR /workspace
 
 # Install dependencies and GitHub CLI (gh)
-RUN apt-get update && apt-get install -y zip unzip jq git curl ca-certificates wget rsync \
+RUN apt-get update && apt-get install -y zip unzip jq git curl ca-certificates wget rsync nano \
     && mkdir -p -m 755 /etc/apt/keyrings \
     && wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
     && chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
