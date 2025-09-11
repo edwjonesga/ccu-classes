@@ -37,7 +37,7 @@ ENV CLASSPATH="/opt/junit/junit-platform-console-standalone.jar:/opt/asm/asm-9.8
 
 # Create javacc wrapper script
 RUN echo '#!/bin/sh' > /usr/local/bin/javacc && \
-    echo 'java -jar /opt/javacc/javacc-7.0.13.jar "$@"' >> /usr/local/bin/javacc && \
+    echo 'java -cp /opt/javacc/javacc-7.0.13.jar org.javacc.parser.Main "$@"' >> /usr/local/bin/javacc && \
     chmod +x /usr/local/bin/javacc
 
 
