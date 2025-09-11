@@ -97,25 +97,36 @@ sudo chown $USER:$USER -R .
 
 ## Stage 2: Development Environment
 
-After the initialization is complete, you will have a new directory containing your assignment repository. You will use this for your development work.
+After the initialization is complete, all the necessary project files, including a new `Dockerfile` and helper scripts, will be in your current directory.
 
-1.  In your local terminal, change into your new repository directory. The name will be what you chose during the initialization script.
-    ```sh
-    cd <your-repo-name>
-    ```
+### Step 6: Build Your Development Image
+Now, build the main development Docker image using the provided script. This is different from the initializer image and contains all the tools for your assignments.
+```sh
+./buildContainer.sh
+```
+> **Note for Windows Users:** If `./buildContainer.sh` does not work, you can use the `docker build` command from **Step 3** to build your development image.
 
-2.  Build your development Docker image using the provided script:
-    ```sh
-    ./buildContainer.sh
-    ```
+### Step 7: Start Your Development Session
+Now you can start your development session. From this point onwards, you will use this convenient script to enter your container. In your terminal, run:
+```sh
+./startContainer.sh
+```
+> **Note for Windows Users:** If `./startContainer.sh` does not work, you can use the `docker run` command from **Step 4** to start your development container.
 
-3.  Start your development container using the provided script:
-    ```sh
-    ./startContainer.sh
-    ```
-    > **Note for Windows Users:** `/startContainer.sh` will not work so instead copy the same `docker run` command from step 4
+### Step 8: Authenticate with GitHub
+Before you can push your code, you may need to perform a one-time authentication with GitHub from inside the container. Inside the container's shell, run:
+```sh
+gh auth login
+```
+Follow the prompts, selecting `HTTPS` as your protocol and `Login with a web browser`. Copy the one-time code and open the URL in your browser on your host machine to complete the authentication.
 
-You will now be inside your development container, with all the necessary tools and your repository files mounted in the `/workspace` directory. Happy coding!
+### Step 9: Push Your Initial Commit
+The `init.sh` script created an initial commit for you. Now that you are authenticated, you can push it to your repository to make sure everything is connected correctly.
+```sh
+git push -u origin main
+```
+
+You are now fully set up. Happy coding!
 
 ## Keeping Your Repository Up-to-Date
 
