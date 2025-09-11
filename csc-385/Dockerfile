@@ -6,7 +6,7 @@ FROM openjdk:16-jdk-bullseye
 LABEL maintainer="edwjones@ccu.edu"
 
 # Create necessary directories
-RUN mkdir -p /workspace /bin /opt/junit
+RUN mkdir -p /workspace /workspace/bin /bin /opt/junit
 
 # Install required utilities and download JUnit
 RUN apt-get update && apt-get install -y \
@@ -26,7 +26,6 @@ WORKDIR /workspace
 
 # Set CLASSPATH to include JUnit and current directory
 ENV CLASSPATH="/opt/junit/junit-platform-console-standalone.jar:."
-
 
 # Add the bin directory to the PATH
 ENV PATH="/workspace/bin:${PATH}"
@@ -86,8 +85,29 @@ RUN echo '#!/bin/bash' > /usr/local/bin/init.sh && \
     echo 'echo "----------------------------------------------------"' >> /usr/local/bin/init.sh && \
     echo 'exit 0' >> /usr/local/bin/init.sh
 
-# Make the script executable
+# Make the init script executable
 RUN chmod +x /usr/local/bin/init.sh
 
-# Set the default command to run the script
+# Create the entrypoint.sh script to handle runtime permissions
+RUN echo '#!/bin/sh' > /usr/local/bin/entrypoint.sh && \
+    echo '#' >> /usr/local/bin/entrypoint.sh && \
+    echo '# This script is the entrypoint for the Docker container.' >> /usr/local/bin/entrypoint.sh && \
+    echo '# It ensures that any scripts in /workspace/bin are executable.' >> /usr/local/bin/entrypoint.sh && \
+    echo '#' >> /usr/local/bin/entrypoint.sh && \
+    echo '' >> /usr/local/bin/entrypoint.sh && \
+    echo '# Make all .sh files in /workspace/bin executable' >> /usr/local/bin/entrypoint.sh && \
+    echo 'if [ -d "/workspace/bin" ]; then' >> /usr/local/bin/entrypoint.sh && \
+    echo '  find /workspace/bin -type f -name "*.sh" -exec chmod +x {} +' >> /usr/local/bin/entrypoint.sh && \
+    echo 'fi' >> /usr/local/bin/entrypoint.sh && \
+    echo '' >> /usr/local/bin/entrypoint.sh && \
+    echo '# Execute the command passed to the container (e.g., /bin/bash)' >> /usr/local/bin/entrypoint.sh && \
+    echo 'exec "$@"' >> /usr/local/bin/entrypoint.sh
+
+# Make the entrypoint script executable
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Set the entrypoint to our script
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+# Set the default command to be executed by the entrypoint
 CMD ["/bin/bash"]
