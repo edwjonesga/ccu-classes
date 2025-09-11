@@ -81,7 +81,19 @@ This step will create your personal GitHub repository for this class and clone i
       ```
     > **Note for Linux Users:** You may need to run this command with `sudo`.
 
-5.  The container will run the `init.sh` script, which will guide you through the GitHub setup process. At the end, it will clone your new repository into the directory you are in and then exit.
+5.  You will now be inside the initializer container. To begin the setup process, run the initialization script:
+    ```sh
+    ./init.sh
+    ```
+6.  The script will guide you through the GitHub setup process. At the end, it will clone your new repository into the directory you are in.
+7.  Once the script is finished, the container may not exit automatically. If you are still inside the container, simply type `exit` and press Enter.
+
+**Important Note for Linux/Chromebook Users:**
+
+After exiting the container, the new project files will be owned by the `root` user. You must fix the file ownership by running the following command from your terminal, in the same directory where you ran the `docker` commands:
+```sh
+sudo chown $USER:$USER -R .
+```
 
 ## Stage 2: Development Environment
 
