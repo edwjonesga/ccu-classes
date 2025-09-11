@@ -1,9 +1,11 @@
+
 options {
   STATIC = false;
 }
 
 PARSER_BEGIN(MyParser)
-
+import java.util.ArrayList;
+import java.util.List;
 public class MyParser {
     public static void main(String[] args) throws ParseException {
         MyParser parser = new MyParser(System.in);
@@ -24,8 +26,18 @@ SKIP : {
 // For example:
 // TOKEN : { < IF: "if" > }
 
-void Start() : {}
-{
-    // Basic stub to let the parser run. You’ll replace this.
-    <EOF>
+List<String> Start() : {
+    List<String> tokens = new ArrayList<>();
+    Token t;
 }
+{
+    {while (true) {
+        t = getNextToken();
+        if (t.kind == EOF) break;
+        tokens.add(t.image);
+    }
+    {
+        return tokens;
+    }}
+}
+
