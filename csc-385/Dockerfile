@@ -6,9 +6,9 @@ FROM openjdk:16-jdk-bullseye
 LABEL maintainer="edwjones@ccu.edu"
 
 # Create necessary directories
-RUN mkdir -p /workspace /workspace/bin /bin /opt/junit
+RUN mkdir -p /workspace /workspace/bin /bin /opt/junit /opt/javacc
 
-# Install required utilities and download JUnit
+# Install required utilities and download JUnit and JavaCC
 RUN apt-get update && apt-get install -y \
     zip \
     unzip \
@@ -19,13 +19,27 @@ RUN apt-get update && apt-get install -y \
     rsync \
     nano && \
     wget -O /opt/junit/junit-platform-console-standalone.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.8.2/junit-platform-console-standalone-1.8.2.jar && \
+    wget -O /opt/javacc/javacc-7.0.13.jar https://repo1.maven.org/maven2/net/java/dev/javacc/javacc/7.0.13/javacc-7.0.13.jar && \
     apt-get clean
 
 # Set the working directory inside the container
 WORKDIR /workspace
 
-# Set CLASSPATH to include JUnit and current directory
-ENV CLASSPATH="/opt/junit/junit-platform-console-standalone.jar:."
+# Download ASM jars
+RUN mkdir -p /opt/asm && \
+    wget -O /opt/asm/asm-9.8.jar https://repo1.maven.org/maven2/org/ow2/asm/asm/9.8/asm-9.8.jar && \
+    wget -O /opt/asm/asm-commons-9.8.jar https://repo1.maven.org/maven2/org/ow2/asm/asm-commons/9.8/asm-commons-9.8.jar && \
+    wget -O /opt/asm/asm-tree-9.8.jar https://repo1.maven.org/maven2/org/ow2/asm/asm-tree/9.8/asm-tree-9.8.jar && \
+    wget -O /opt/asm/asm-util-9.8.jar https://repo1.maven.org/maven2/org/ow2/asm/asm-util/9.8/asm-util-9.8.jar
+
+# Set CLASSPATH to include JUnit, ASM jars, and current directory
+ENV CLASSPATH="/opt/junit/junit-platform-console-standalone.jar:/opt/asm/asm-9.8.jar:/opt/asm/asm-commons-9.8.jar:/opt/asm/asm-tree-9.8.jar:/opt/asm/asm-util-9.8.jar:."
+
+# Create javacc wrapper script
+RUN echo '#!/bin/sh' > /usr/local/bin/javacc && \
+    echo 'java -jar /opt/javacc/javacc-7.0.13.jar "$@"' >> /usr/local/bin/javacc && \
+    chmod +x /usr/local/bin/javacc
+
 
 # Add the bin directory to the PATH
 ENV PATH="/workspace/bin:${PATH}"
