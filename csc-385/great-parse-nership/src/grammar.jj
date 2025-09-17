@@ -26,7 +26,7 @@ SKIP : {
 // TOKEN : { < IF: "if" > }
 
 String Start() : {
-    String ast;
+    List<String> ast;
 }
 {
     ast = Assignment() <EOF>
@@ -35,15 +35,20 @@ String Start() : {
     }
 }
 
-// ----------- ASSIGNMENT RULE ------------------
+// ----------- EXAMPLE ASSIGNMENT RULE ------------------
 
-String Assignment() : {
-    Token varName;
-    Token value;
+List<String> Assignment() : {
+    Token var, val;
+    List<String> toks = new ArrayList<>();
 }
 {
-    <INT> varName=<IDENTIFIER> <ASSIGN> value=<INT_LITERAL> <SEMI>
+    <INT> var=<IDENTIFIER> <ASSIGN> val=<INT_LITERAL> <SEMI>
     {
-        return "(declare int " + varName.image + " (assign " + value.image + "))";
+        toks.add("int");
+        toks.add(var.image);
+        toks.add("=");
+        toks.add(val.image);
+        toks.add(";");
+        return toks;
     }
 }
