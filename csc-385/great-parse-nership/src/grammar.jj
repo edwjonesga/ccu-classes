@@ -1,0 +1,49 @@
+options {
+  STATIC = false;
+}
+
+PARSER_BEGIN(MyParser)
+import java.util.ArrayList;
+import java.util.List;
+public class MyParser {
+    public static void main(String[] args) throws ParseException {
+        MyParser parser = new MyParser(System.in);
+        parser.Start();
+        System.out.println("Parsing completed.");
+    }
+}
+
+PARSER_END(MyParser)
+
+// Whitespace to skip (add more here)
+SKIP : {
+    " " 
+}
+
+
+// Your real tokens go below this line (to be filled in by students)
+// For example:
+// TOKEN : { < IF: "if" > }
+
+String Start() : {
+    String ast;
+}
+{
+    ast = Assignment() <EOF>
+    {
+        return ast;
+    }
+}
+
+// ----------- ASSIGNMENT RULE ------------------
+
+String Assignment() : {
+    Token varName;
+    Token value;
+}
+{
+    <INT> varName=<IDENTIFIER> <ASSIGN> value=<INT_LITERAL> <SEMI>
+    {
+        return "(declare int " + varName.image + " (assign " + value.image + "))";
+    }
+}
