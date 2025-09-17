@@ -108,9 +108,4 @@ USE exampledb;
 
 Enjoy exploring SQL!
 
-```
 
----
-
-Let me know if you want this saved into an actual `.md` file or extended with bonus exercises (like sorting, filtering, joins, etc).
-```
