@@ -120,7 +120,7 @@ String name = "Fido";
 Dog d;
 Cat c;
 
-void speak() {
+void speak(int x, int y) {
     print(d.name);
     print("Meow: " + c.volume);
     d.bark();
