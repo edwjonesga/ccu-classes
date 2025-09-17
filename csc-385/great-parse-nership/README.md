@@ -84,13 +84,13 @@ Your grammar should now handle the following structures:
    `int x;` or `Dog d;`
 
 2. **Variable Assignments**
-   `x = 5;` or `d = new Dog();`
+   `x = 5;` or `d = new Dog(...);`
 
 3. **Function Invocation**
-   `print("Hello");`, `d.speak();`
+   `print("Hello");`, `d.speak(...);`
 
 4. **Function Declaration**
-   `void reset() { ... }`
+   `void reset(...) { ... }`
 
 5. **Expressions**
    Arithmetic and logical expressions with grouping: `(a + b) * c`
