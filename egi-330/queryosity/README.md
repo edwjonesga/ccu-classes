@@ -11,7 +11,7 @@ You can set up the assignment database in two different ways:
 This will run the file and return you to your normal terminal shell:
 
 ```bash
-mysql -u root -p < queryosity.sql
+mysql < queryosity.sql
 ```
 
 ### Option 2 – Run and Stay Inside MySQL (Interactive Mode)
@@ -19,7 +19,7 @@ mysql -u root -p < queryosity.sql
 This will run the file and keep you in the MySQL prompt so you can continue experimenting:
 
 ```bash
-mysql -u root -p
+mysql
 ```
 
 Then inside MySQL, type:
