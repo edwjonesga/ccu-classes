@@ -1,6 +1,6 @@
 # Assignment: **Queryosity**
 
-*SQL Week 5 – Applied Data and Statistical Analysis*
+*SQL Week 5 – Applied Data and Statistical Analysis.*
 
 ## How to Run the Assignment
 Run `pull-updates.sh` from inside your docker container to get the new assignmemnt code.
