@@ -74,10 +74,11 @@ No need to create or insert data — just focus on writing queries.
 ### Part 5 – Research & Stretch Goals 🚀
 
 These commands were not explicitly covered in the slides — use **research skills** to figure them out:
-18\. Use `DISTINCT` to list all the unique cities that customers live in.
-19\. Use a `LIKE` query to find customers whose first name starts with “A”.
-20\. Write a query using `LIMIT` to return only the first 3 products.
-21\. Research how to use `CASE` in SQL and write a query that classifies products into price tiers (e.g., “Low”, “Medium”, “High”).
+
+18. Use `DISTINCT` to list all the unique cities that customers live in.
+19. Use a `LIKE` query to find customers whose first name starts with “A”.
+20. Write a query using `LIMIT` to return only the first 3 products.
+21. Research how to use `CASE` in SQL and write a query that classifies products into price tiers (e.g., “Low”, “Medium”, “High”).
 
 ---
 
