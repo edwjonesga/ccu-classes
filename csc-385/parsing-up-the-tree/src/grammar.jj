@@ -1,0 +1,73 @@
+options {
+  STATIC = false;
+}
+
+PARSER_BEGIN(MyParser)
+import java.util.ArrayList;
+import java.util.List;
+
+public class MyParser {
+    public static void main(String[] args) throws ParseException {
+        MyParser parser = new MyParser(System.in);
+        Object root = parser.Start(); // Will return something with toASTTestTree()
+        System.out.println(root.toASTTestTree().toString());
+    }
+}
+PARSER_END(MyParser)
+
+// Whitespace to skip (add more here)
+SKIP : {
+    " " | "\t" | "\r" | "\n"
+}
+
+// ----------- TOKENS ------------------
+
+TOKEN : { < INT: "int" > }
+TOKEN : { < ASSIGN: "=" > }
+TOKEN : { < SEMI: ";" > }
+TOKEN : { < IDENTIFIER: (["a"-"z","A"-"Z"])(["a"-"z","A"-"Z","0"-"9"])* > }
+TOKEN : { < INT_LITERAL: (["0"-"9"])+ > }
+
+// ----------- START SYMBOL ------------------
+
+Object Start() :
+{
+    Object n;
+}
+{
+    n = Assignment() <EOF> { return n; }
+}
+
+// ----------- ASSIGNMENT RULE ------------------
+//
+// Two approaches are shown:
+//  1. Rolling your own AST node
+//  2. Using JJTree
+
+// --- Rolling Your Own Tree ---
+Object Assignment() :
+{
+    Token var, val;
+}
+{
+    <INT> var=<IDENTIFIER> <ASSIGN> val=<INT_LITERAL> <SEMI>
+    {
+        // Manual AST node
+        return new AssignmentNode(var.image, val.image);
+    }
+}
+
+// --- JJTree Style (if using JJTree) ---
+//
+// If JJTree is enabled, you can instead define the rule as:
+//
+// Assignment() #Assignment : {}
+// {
+//     <INT> <IDENTIFIER> <ASSIGN> <INT_LITERAL> <SEMI>
+// }
+//
+// JJTree will automatically create an ASTAssignment node
+// and add children for the tokens.
+// Later, you would use node.toASTTestTree() to normalize it
+// into the common ASTTestTree format for testing.
+
