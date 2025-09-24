@@ -1,3 +1,5 @@
+CREATE DATABASE IF NOT EXISTS exampledb; 
+USE exampledb;
 -- ========================================
 -- Queryosity: SQL Week 5 Assignment Starter
 -- ========================================
