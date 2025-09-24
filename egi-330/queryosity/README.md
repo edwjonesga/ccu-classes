@@ -19,7 +19,7 @@ mysql -u root -p < queryosity.sql
 This will run the file and keep you in the MySQL prompt so you can continue experimenting:
 
 ```bash
-mysql -u root -p
+mysql
 ```
 
 Then inside MySQL, type:
