@@ -7,7 +7,7 @@ ENDPOINT_URL="https://uploadattachment-qjoo55pcba-uc.a.run.app"
 echo "Please enter your attachment code:"
 read attachmentCode
 
-# Find files in the current directory and the Dockerfile from the parent
+# Find files in the current directory and its subdirectories, and the Dockerfile from the parent
 # The script is expected to be run from an assignment directory, so '../' refers to the course root.
 files_to_select=()
 while IFS= read -r file; do
@@ -15,32 +15,105 @@ while IFS= read -r file; do
     if [[ "$file" == ../Dockerfile ]]; then
         display_path="COURSE_ROOT/Dockerfile"
     else
-        display_path=$(basename "$file")
+        # remove leading ./
+        display_path=${file#./}
     fi
     files_to_select+=("$file|$display_path")
-done < <(find . -type f -maxdepth 1 -o -type f -path '../Dockerfile')
+done < <(find . -type f -not -path "./.git/*" -o -type f -path '../Dockerfile')
 
 
-# Let the user select files
-echo "Select which files to upload (e.g., 1 2 4). To select all, type 'all':"
-for i in "${!files_to_select[@]}"; do
-    original_path=$(echo "${files_to_select[$i]}" | cut -d'|' -f2)
-    printf "%d) %s\n" $((i+1)) "$original_path"
-done
+# Interactively select files
+function interactive_select() {
+    # The list of files to choose from
+    local -n options=$1
+    # The array to store the indices of selected files
+    local -n selected_indices_ref=$2
 
-read -p "Your selection: " -a selection
+    local cursor=0
+    local count=${#options[@]}
+    local selected=()
+    for ((i=0; i<count; i++)); do
+        selected+=("false")
+    done
+
+    # Make sure we restore terminal settings on exit
+    trap 'tput cnorm; stty echo; exit' SIGINT EXIT
+
+    # Hide cursor and disable echoing characters
+    tput civis
+    stty -echo
+
+    # Clear screen for the menu
+    tput clear
+
+    while true; do
+        # Move cursor to top left
+        tput cup 0 0
+
+        echo "Select files to upload. Use arrow keys to navigate, space to select, enter to confirm."
+        echo "---------------------------------------------------------------------------------"
+
+        for i in $(seq 0 $(($count-1))); do
+            local display_path=$(echo "${options[$i]}" | cut -d'|' -f2)
+            local prefix="[ ]"
+            if [ "${selected[$i]}" = "true" ]; then
+                prefix="[x]"
+            fi
+
+            if [ $i -eq $cursor ]; then
+                # Highlight current line
+                echo -e " > \e[7m$prefix $display_path\e[0m"
+            else
+                echo "   $prefix $display_path"
+            fi
+        done
+
+        # Read a single keystroke
+        read -rsn1 key
+        # If it's an escape sequence, read more
+        if [[ $key == $'\x1b' ]]; then
+            read -rsn2 -t 0.1 key
+            if [[ $key == '[A' ]]; then # Up arrow
+                cursor=$(( (cursor - 1 + count) % count ))
+            elif [[ $key == '[B' ]]; then # Down arrow
+                cursor=$(( (cursor + 1) % count ))
+            fi
+        elif [[ $key == ' ' ]]; then # Space bar
+            if [ "${selected[$cursor]}" = "true" ]; then
+                selected[$cursor]="false"
+            else
+                selected[$cursor]="true"
+            fi
+        elif [[ $key == '' ]]; then # Enter key
+            break
+        fi
+    done
+
+    # Clear the menu from the screen
+    tput clear
+
+    # Show cursor and re-enable echo
+    tput cnorm
+    stty echo
+
+    # Populate the array of selected indices for the caller
+    for i in $(seq 0 $(($count-1))); do
+        if [ "${selected[$i]}" = "true" ]; then
+            # We use 1-based indexing for the result
+            selected_indices_ref+=($((i+1)))
+        fi
+    done
+
+    # Remove the trap so we don't exit
+    trap - SIGINT EXIT
+}
+
+# Let the user select files using the interactive menu
+selected_indices=()
+interactive_select files_to_select selected_indices
 
 # Prepare the data payload
 json_payload="{\"attachmentCode\":\"$attachmentCode\",\"data\":{\"files\":{}}}"
-selected_indices=()
-
-if [[ "${selection[0]}" == "all" ]]; then
-    for i in "${!files_to_select[@]}"; do
-        selected_indices+=($((i+1)))
-    done
-else
-    selected_indices=("${selection[@]}")
-fi
 
 
 for index in "${selected_indices[@]}"; do
