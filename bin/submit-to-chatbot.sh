@@ -97,30 +97,28 @@ function interactive_select() {
             fi
         done
 
-        # Read a single keystroke using dd for reliability, which can handle NUL bytes
-        key=$(dd bs=1 count=1 2>/dev/null)
-
-        # If it's an escape sequence, read the rest of it
-        if [[ "$key" == $'\x1b' ]]; then
+        # Read a single character of input, timing out quickly if it's an escape sequence
+        read -rsn1 key
+        if [[ "$key" == $'\e' ]]; then
             read -rsn2 -t 0.01 rest
             key+=$rest
         fi
 
         case "$key" in
-            $'\x1b[A') # Up arrow
+            $'\e[A') # Up arrow
                 cursor=$(( (cursor - 1 + count) % count ))
                 ;;
-            $'\x1b[B') # Down arrow
+            $'\e[B') # Down arrow
                 cursor=$(( (cursor + 1) % count ))
                 ;;
-            ' '|$'\0') # Space or Ctrl+Space (which sends a NUL byte)
+            ' ') # Space bar
                 if [ "${selected[$cursor]}" = "true" ]; then
                     selected[$cursor]="false"
                 else
                     selected[$cursor]="true"
                 fi
                 ;;
-            $'\n') # Enter
+            ''|$'\n') # Enter key (empty string from -n1 or newline)
                 break
                 ;;
         esac
