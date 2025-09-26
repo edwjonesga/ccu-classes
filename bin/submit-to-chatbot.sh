@@ -7,19 +7,48 @@ ENDPOINT_URL="https://uploadattachment-qjoo55pcba-uc.a.run.app"
 echo "Please enter your attachment code:"
 read attachmentCode
 
-# Find files in the current directory and its subdirectories, and the Dockerfile from the parent
+# Find files, respecting .gitignore if it exists
 # The script is expected to be run from an assignment directory, so '../' refers to the course root.
 files_to_select=()
+
+# Build the list of paths to prune based on .gitignore
+prune_paths=()
+# Always prune .git
+prune_paths+=("-path" "./.git")
+
+if [ -f ".gitignore" ]; then
+    while IFS= read -r pattern; do
+        # Basic parsing: trim whitespace, remove comments/empty lines
+        pattern=$(echo "$pattern" | xargs)
+        if [[ -n "$pattern" && "$pattern" != \#* ]]; then
+            # Basic conversion of gitignore pattern to path
+            [[ "${pattern: -1}" == "/" ]] && pattern="${pattern%/}"
+            [[ "${pattern:0:1}" == "/" ]] && pattern="${pattern#/}"
+            # Add an OR condition with the new path to prune
+            prune_paths+=("-o" "-path" "./$pattern")
+        fi
+    done < .gitignore
+fi
+
+# Construct and run the find command for the current directory
+find_cmd=("find" ".")
+find_cmd+=("(")
+find_cmd+=("${prune_paths[@]}")
+find_cmd+=(")")
+find_cmd+=("-prune")
+find_cmd+=("-o")
+find_cmd+=("-type" "f" "-print")
+
 while IFS= read -r file; do
-    # Use a placeholder to make the Dockerfile path more readable
-    if [[ "$file" == ../Dockerfile ]]; then
-        display_path="COURSE_ROOT/Dockerfile"
-    else
-        # remove leading ./
-        display_path=${file#./}
-    fi
+    # remove leading ./ for display
+    display_path=${file#./}
     files_to_select+=("$file|$display_path")
-done < <(find . -type f -not -path "./.git/*" -o -type f -path '../Dockerfile')
+done < <("${find_cmd[@]}")
+
+# Separately, check for the parent Dockerfile and add it to the list
+if [ -f "../Dockerfile" ]; then
+    files_to_select+=("../Dockerfile|COURSE_ROOT/Dockerfile")
+fi
 
 
 # Interactively select files
@@ -68,25 +97,33 @@ function interactive_select() {
             fi
         done
 
-        # Read a single keystroke
-        read -rsn1 key
-        # If it's an escape sequence, read more
-        if [[ $key == $'\x1b' ]]; then
-            read -rsn2 -t 0.1 key
-            if [[ $key == '[A' ]]; then # Up arrow
-                cursor=$(( (cursor - 1 + count) % count ))
-            elif [[ $key == '[B' ]]; then # Down arrow
-                cursor=$(( (cursor + 1) % count ))
-            fi
-        elif [[ $key == ' ' ]]; then # Space bar
-            if [ "${selected[$cursor]}" = "true" ]; then
-                selected[$cursor]="false"
-            else
-                selected[$cursor]="true"
-            fi
-        elif [[ $key == '' ]]; then # Enter key
-            break
+        # Read a single keystroke using dd for reliability, which can handle NUL bytes
+        key=$(dd bs=1 count=1 2>/dev/null)
+
+        # If it's an escape sequence, read the rest of it
+        if [[ "$key" == $'\x1b' ]]; then
+            read -rsn2 -t 0.01 rest
+            key+=$rest
         fi
+
+        case "$key" in
+            $'\x1b[A') # Up arrow
+                cursor=$(( (cursor - 1 + count) % count ))
+                ;;
+            $'\x1b[B') # Down arrow
+                cursor=$(( (cursor + 1) % count ))
+                ;;
+            ' '|$'\0') # Space or Ctrl+Space (which sends a NUL byte)
+                if [ "${selected[$cursor]}" = "true" ]; then
+                    selected[$cursor]="false"
+                else
+                    selected[$cursor]="true"
+                fi
+                ;;
+            $'\n') # Enter
+                break
+                ;;
+        esac
     done
 
     # Clear the menu from the screen
