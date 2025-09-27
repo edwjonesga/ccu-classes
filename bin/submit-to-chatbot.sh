@@ -79,7 +79,7 @@ function interactive_select() {
         # Move cursor to top left
         tput cup 0 0
 
-        echo "Select files to upload. Use arrow keys to navigate, space to select, enter to confirm."
+        echo "Select files to upload. Use arrow keys to navigate, 'x' to select, enter to confirm."
         echo "---------------------------------------------------------------------------------"
 
         for i in $(seq 0 $(($count-1))); do
@@ -111,7 +111,7 @@ function interactive_select() {
             $'\e[B') # Down arrow
                 cursor=$(( (cursor + 1) % count ))
                 ;;
-            ' ') # Space bar
+            'x') # 'x' key
                 if [ "${selected[$cursor]}" = "true" ]; then
                     selected[$cursor]="false"
                 else
