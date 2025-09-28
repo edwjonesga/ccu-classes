@@ -147,25 +147,33 @@ function interactive_select() {
 selected_indices=()
 interactive_select files_to_select selected_indices
 
-# Prepare the data payload
-json_payload="{\"attachmentCode\":\"$attachmentCode\",\"data\":{\"files\":{}}}"
+# Prepare the data payload using a streaming approach to avoid argument length limits
+echo "Preparing submission..."
+files_json=$({
+    for index in "${selected_indices[@]}"; do
+        file_info=${files_to_select[$((index-1))]}
+        file_path_actual=$(echo "$file_info" | cut -d'|' -f1)
 
+        if [ -f "$file_path_actual" ]; then
+            content=$(base64 -w 0 "$file_path_actual")
+            filename=$(basename "$file_path_actual")
+            # Create a JSON object for this file and print it to stdout
+            jq -n --arg name "$filename" --arg content "$content" '{($name): $content}'
+        else
+            echo "Warning: File not found at $file_path_actual. Skipping." >&2
+        fi
+    done
+} | jq -s 'add')
 
-for index in "${selected_indices[@]}"; do
-    file_info=${files_to_select[$((index-1))]}
-    file_path_actual=$(echo "$file_info" | cut -d'|' -f1)
+# Check if any files were selected
+if [ -z "$files_json" ] || [ "$files_json" == "null" ] || [ "$files_json" == "{}" ]; then
+    echo "No files selected or found. Aborting."
+    exit 1
+fi
 
-    if [ -f "$file_path_actual" ]; then
-        # Base64 encode the file content to ensure it's JSON-safe
-        content=$(base64 -w 0 "$file_path_actual")
-        filename=$(basename "$file_path_actual")
-
-        # Add file to JSON payload
-        json_payload=$(echo "$json_payload" | jq --arg name "$filename" --arg content "$content" '.data.files[$name] = $content')
-    else
-        echo "Warning: File not found at $file_path_actual. Skipping."
-    fi
-done
+# Combine the files object with the attachment code into the final payload
+json_payload=$(jq -n --arg code "$attachmentCode" --argjson files "$files_json" \
+  '{"attachmentCode": $code, "data": {"files": $files}}')
 
 # Send the data using curl
 echo "Uploading files..."
