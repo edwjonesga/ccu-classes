@@ -1,5 +1,5 @@
 
-# Assignment: The Scope of Our Calling ✝️🔍
+# The Scope of Our Calling ✝️🔍
 
 This week, we build on your parser/AST work by implementing **symbol tables** and **scope tracking**.  
 Your mission: ensure that when variables, functions, and parameters are declared, they can be properly tracked, looked up, and resolved across nested scopes.
