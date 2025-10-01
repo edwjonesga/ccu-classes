@@ -12,7 +12,6 @@ Your mission: ensure that when variables, functions, and parameters are declared
   - Declaring symbols
   - Looking up symbols locally and across enclosing scopes
   - Entering and exiting scopes
-  - Returning a structured snapshot of current scopes for testing
 
 - Integrate symbols with your existing **AST nodes** (e.g., `AssignmentNode`, `IfNode`, `FunctionDeclNode`).
 
