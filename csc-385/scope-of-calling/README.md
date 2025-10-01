@@ -123,7 +123,7 @@ public class SymbolTableBuilder implements NodeVisitor {
   * Shadowing in nested scopes
   * Duplicate declaration detection
   * Scope removal after exit
-* A simple **Visitor-based semantic pass** that walks the AST and interacts with your symbol table.
+* A simple **Visitor-based semantic pass** that walks the AST and interacts with your symbol table to do declaration checks.
 
 ---
 
