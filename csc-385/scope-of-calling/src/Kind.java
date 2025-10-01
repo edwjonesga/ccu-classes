@@ -1,0 +1,4 @@
+
+public enum Kind {
+    VARIABLE, FUNCTION, PARAMETER, CONSTANT
+}
