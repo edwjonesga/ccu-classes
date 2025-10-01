@@ -10,10 +10,10 @@ public class MainTest {
 
     @Test
     public void testAssignmentAST() throws Exception {
-        String input = "int x = 42;";
+        String input = "x = 42;";
         MyParser parser = new MyParser(new StringReader(input));
         ASTTestTree tree = parser.Assignment().toASTTestTree();
-        assertEquals("(= (decl int x) 42)", tree.toString());
+        assertEquals("(= x 42)", tree.toString());
     }
 
     @Test
@@ -66,7 +66,7 @@ public class MainTest {
 
     @Test
     public void testAssignmentMissingEqualsSign() {
-        String input = "int x 42;";
+        String input = "x 42;";
         MyParser parser = new MyParser(new StringReader(input));
         assertThrows(ParseException.class, parser::Assignment);
     }
