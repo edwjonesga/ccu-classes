@@ -41,4 +41,3 @@ INSERT INTO customer (FirstName, LastName, email, street, city, state, zip_code)
 VALUES ('John', 'Doe', 'john.doe@example.com', '123 Main St', 'Springfield', 'IL', '62701');
 
 -- Scratch Area
-select * from customer;
