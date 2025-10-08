@@ -1,0 +1,29 @@
+================================
+Intersection Results
+================================
+-- Paste the results of your INTERSECT query here.
+
+
+================================
+Union Results
+================================
+-- Paste the results of your UNION query here.
+
+
+================================
+Union All Results
+================================
+-- Paste the results of your UNION ALL query here.
+
+
+================================
+Nested Select Statements Results
+================================
+-- Paste the results of your nested select query here.
+
+
+================================
+Adding Indexes Results
+================================
+-- These statements do not produce a table output.
+-- You can verify the indexes were created by using a command like `SHOW INDEX FROM customer;` and pasting the output here.
