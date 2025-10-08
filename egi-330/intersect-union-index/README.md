@@ -4,8 +4,6 @@ This assignment will guide you through performing basic operations in a MySQL da
 ## Step 1: Setting Up MySQL
 We will first set up MySQL in your environment and connect to our database.
 
-## Whack Tables
-
 ## Step 2: Creating Tables
 ### Resources for Creating Other Tables
 
@@ -15,26 +13,6 @@ We will first set up MySQL in your environment and connect to our database.
 *   SQL Advanced Function Reference [here](https://docs.google.com/presentation/d/1sWq-pRfXJTcGcoQEKq-O8iOvpT5irTI9Xm12Qf8kQ84/edit#slide=id.g2f9bcf455a1_0_0)
 * Check previous Create code for how to do foreign keys
 
-## Step 3: Inserting Data
-Insert some sample records into the `customers` table.
-
-## Scratch Area
-Retrieve and display all records from the `customer` table.
-
-## Updating Data
-Update specific records in the `employees` table and view the changes.
-
-## Deleting Data
-Delete specific records from the `employees` table and view the changes.
-
-## Your Turn
-
-For each of the following tasks, write a SQL query to accomplish the goal. Add your queries to a new SQL file. After running each query, paste the output into the corresponding section in the `results.txt` file.
-
-**Submission**:
-Submit both your SQL file containing all your queries and the completed `results.txt` file.
-
----
 
 ### Assignment Tasks
 

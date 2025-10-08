@@ -1,4 +1,9 @@
 -- List all tables in the database
+-- Create a database named 'subscription_service' if it doesn't exist
+CREATE DATABASE IF NOT EXISTS subscription_service;
+-- Use the 'subscription_service' database
+USE subscription_service;
+
 SHOW TABLES;
 
 -- Whack Tables
