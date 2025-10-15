@@ -1,0 +1,60 @@
+options {
+    STATIC = false;                         // Generate non-static parser for object-oriented use
+    LOOKAHEAD = 1;                          // Basic LL(1) grammar
+    PARSER_PACKAGE = "compiler.frontend";   // Ensures generated parser classes go here
+}
+
+PARSER_BEGIN(MyParser)
+package compiler.frontend;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * A simple starter parser for demonstration and testing.
+ * Later, it will be wrapped in a SyntaxAnalysisPass that feeds it input from CompilerContext.
+ */
+public class MyParser {
+
+    public static void main(String[] args) throws ParseException {
+        System.out.println("Starting parser...");
+        MyParser parser = new MyParser(System.in);
+        parser.Start();
+        System.out.println("Parsing completed successfully!");
+    }
+}
+PARSER_END(MyParser)
+
+/** Skip whitespace and newlines */
+SKIP : {
+    " " | "\t" | "\r" | "\n"
+}
+
+/** Example tokens */
+TOKEN : {
+    < IDENTIFIER: (["a"-"z","A"-"Z"]) (["a"-"z","A"-"Z","0"-"9","_"])* >
+|   < NUMBER: (["0"-"9"])+ >
+|   < PLUS: "+" >
+|   < MINUS: "-" >
+|   < EQUAL: "=" >
+|   < SEMI: ";" >
+}
+
+/** Starting grammar rule */
+void Start() :
+{}
+{
+    ( Statement() )* <EOF>
+}
+
+/** Example statement rule */
+void Statement() :
+{
+    Token id, val;
+}
+{
+    id = <IDENTIFIER> <EQUAL> val = <NUMBER> <SEMI>
+    {
+        System.out.println("Parsed assignment: " + id.image + " = " + val.image);
+    }
+}
