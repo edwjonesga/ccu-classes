@@ -8,8 +8,8 @@ import java.util.List;
 public class MyParser {
     public static void main(String[] args) throws ParseException {
         MyParser parser = new MyParser(System.in);
-        parser.Start();
-        System.out.println("Parsing completed.");
+        String val = parser.Start();
+        System.out.println("Parsing completed.\n"+val);
     }
 }
 
@@ -17,9 +17,17 @@ PARSER_END(MyParser)
 
 // Whitespace to skip (add more here)
 SKIP : {
-    " " 
+    " "|
+    "\n"
 }
 
+TOKEN : { < INT: "int" > }
+TOKEN : { < IDENTIFIER: (["a"-"z", "A"-"Z"])+ > }
+TOKEN : { < ASSIGN: "=" > }
+TOKEN : { < INT_LITERAL: (["0"-"9"])+ > }
+TOKEN : { < SEMI: ";" > }
+TOKEN : { < LPAREN: "(" > }
+TOKEN : { < RPAREN: ")" > }
 
 // Your real tokens go below this line (to be filled in by students)
 // For example:
@@ -27,27 +35,54 @@ SKIP : {
 
 String Start() : {
     List<String> ast;
+    List<String> intDecl;
 }
 {
-    ast = Assignment() <EOF>
+    intDecl = IntDecl() (
+    ast = AssignmentPart(intDecl) |
+    ast = FunctionDeclarationPart(intDecl))
+    <EOF>
     {
-        return ast;
+        return ast.toString();
     }
 }
 
 // ----------- EXAMPLE ASSIGNMENT RULE ------------------
 
-List<String> Assignment() : {
+List<String> IntDecl() : {
     Token var, val;
     List<String> toks = new ArrayList<>();
 }
 {
-    <INT> var=<IDENTIFIER> <ASSIGN> val=<INT_LITERAL> <SEMI>
+    <INT> var=<IDENTIFIER> 
     {
         toks.add("int");
         toks.add(var.image);
+        return toks;
+    }
+}
+
+List<String> AssignmentPart(List<String> toks) : {
+    Token var, val;
+}
+{
+    <ASSIGN> val=<INT_LITERAL> <SEMI>
+    {
         toks.add("=");
         toks.add(val.image);
+        toks.add(";");
+        return toks;
+    }
+}
+
+List<String> FunctionDeclarationPart(List<String> toks) : {
+    Token var;
+}
+{
+     <LPAREN><RPAREN> <SEMI>
+    {
+        toks.add("(");
+        toks.add(")");
         toks.add(";");
         return toks;
     }
