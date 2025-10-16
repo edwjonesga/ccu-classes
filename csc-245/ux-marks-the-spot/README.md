@@ -1,6 +1,6 @@
 # UX Marks the Spot
 This assignment is all about creating the user experience for your users. Let's spend some time to mock up the designs and the
-user flows to give our users a delightful experience.
+user flows to give our users a delightful experience. Over the next 2 weeks we will discuss these. Your final product will be a slide deck of polished UX designs that walk through the user flows that you will present in class. 
 
 In class today let's do some together on the board, then do some on paper and take pictures to present in class.
 
@@ -32,7 +32,7 @@ Each group designs:
 1. The “My Rooms” page layout.
 2. The “Create Room” and “Join Room” forms.
 3. A simple success/failure message flow.
-   Have them annotate where API calls occur and where client-side validation is needed.
+   Annotate where API calls occur and where client-side validation is needed.
 
 ---
 
@@ -126,7 +126,6 @@ Teams design a **social presence** element:
 
   * `GET /sessions/:id/progress` – peer updates
   * WebSocket or polling for live nudges
-  * `POST /nudge` – send nudge (optional)
 
 ### 🏫 Classroom Design Activity
 
