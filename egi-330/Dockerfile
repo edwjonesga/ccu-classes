@@ -8,7 +8,7 @@ ENV PATH="/workspace/bin:${PATH}"
 WORKDIR /workspace
 
 # Install dependencies
-RUN apt-get update && apt-get install -y git curl ca-certificates wget rsync mysql-server mysql-client lsb-release
+RUN apt-get update && apt-get install -y git curl ca-certificates wget rsync mysql-server mysql-client lsb-release python3 r-base
 
 # Install GitHub CLI
 RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
