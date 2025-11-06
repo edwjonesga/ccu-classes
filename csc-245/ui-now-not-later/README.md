@@ -30,7 +30,7 @@ By the end of this lab and follow-up work, you’ll have:
 
 ## 🪜 **Step 2 — Update `/src/firebase.js`**
 
-Replace the contents of your existing `firebase.js` with the following:
+Update the contents of your existing `firebase.js` to include the at least following:
 
 ```js
 // src/firebase.js
@@ -47,12 +47,25 @@ const firebaseConfig = {
   appId: "APP_ID"
 };
 
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const functions = getFunctions(app);
+const auth = getAuth(app);
+const googleProvider = new GoogleAuthProvider();
 
-// Initialize Auth + Google Provider
-export const auth = getAuth(app);
-export const googleProvider = new GoogleAuthProvider();
+// Connect to emulators if running locally
+if (window.location.hostname === "localhost") {
+  console.log("Development mode: Connecting to local Firebase emulators...");
+  connectFirestoreEmulator(db, 'localhost', 8080);
+  connectFunctionsEmulator(functions, 'localhost', 5001);
+  connectAuthEmulator(auth, 'http://localhost:9099');
+} else {
+  console.log("Production mode: Connecting to live Firebase services.");
+}
+
+export { app, db, functions, auth, googleProvider };
 ```
 
 ✅ This file initializes Firebase **once** and exports both the auth instance and Google sign-in provider.
