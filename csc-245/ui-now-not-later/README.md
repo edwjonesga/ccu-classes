@@ -30,7 +30,7 @@ By the end of this lab and follow-up work, you’ll have:
 
 ## 🪜 **Step 2 — Update `/src/firebase.js`**
 
-Update the contents of your existing `firebase.js` to include the at least following:
+Update the contents of your existing `firebase.js` to include the at least following. WARNING!! Don't blindly copy-paste:
 
 ```js
 // src/firebase.js
@@ -60,7 +60,8 @@ if (window.location.hostname === "localhost") {
   console.log("Development mode: Connecting to local Firebase emulators...");
   connectFirestoreEmulator(db, 'localhost', 8080);
   connectFunctionsEmulator(functions, 'localhost', 5001);
-  connectAuthEmulator(auth, 'http://localhost:9099');
+  // You may not need this line below if you have weird auth things happening uncomment it
+  //connectAuthEmulator(auth, 'http://localhost:9099');
 } else {
   console.log("Production mode: Connecting to live Firebase services.");
 }
