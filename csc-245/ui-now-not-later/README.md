@@ -138,7 +138,7 @@ export function Login() {
 ✅ Test it later after enabling Google Sign-In in Firebase:
 
 * Go to **Build → Authentication → Sign-in Method → Google → Enable**.
-* Add `localhost` and your deployed URL to **Authorized Domains**.
+* Add `localhost` and your deployed URL (0.0.0.0) to **Authorized Domains**.
 
 ---
 
