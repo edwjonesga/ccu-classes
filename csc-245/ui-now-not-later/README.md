@@ -269,10 +269,10 @@ Each component should call into `api.js` and display data dynamically.
 ## 🚀 **Run & Test**
 
 ```bash
-build.sh;run.sh
+./build.sh;./run.sh
 ```
 
-Then open [http://localhost:5173](http://localhost:5173).
+Then open [http://0.0.0.0:5000](http://0.0.0.0:5000).
 
 * Log in with Google.
 * Test API calls in the console.
