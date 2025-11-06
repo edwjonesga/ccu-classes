@@ -287,5 +287,3 @@ Then open [http://localhost:5173](http://localhost:5173).
 * One complete UI flow built out (e.g., “Join Room” or “Start Session”).
 * Code in GitHub.
 ---
-
-Would you like me to add a **short starter checklist + grading rubric** (e.g., 10 pts per milestone) to make it submission-ready for Canvas or your LMS?
