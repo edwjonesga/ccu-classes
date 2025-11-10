@@ -130,3 +130,235 @@ A pipeline that looks like this:
    ↓
 [Runnable Program 🎉]
 ```
+   # 🧠 Compiler Construction Workshop: “TAC to the Future”
+
+Welcome, compiler engineers!
+Today’s session will focus on **building the bridge from the AST to executable Java bytecode**.
+By the end of this lab, you’ll have a compiler that can emit real `.class` files using ASM — including a simple **Hello World** example.
+
+---
+
+## 🎯 **Learning Objectives**
+
+1. Understand how to represent **Three-Address Code (TAC)** as an intermediate representation (IR).
+2. Implement a **TACConversionPass** that converts your Abstract Syntax Tree (AST) into TAC using the **Visitor pattern**.
+3. Implement an **ASMByteCodeGenerationPass** that converts TAC into JVM bytecode using the **ASM library**.
+4. Generate a “Hello World” class file using ASM.
+5. Write unit tests to verify both passes.
+
+---
+
+## 🧩 **Phase 1: Define the TAC Representation**
+
+Start by creating a simple internal representation for TAC instructions.
+
+### ✳️ Step 1 — Create a TAC Instruction Record
+
+```java
+public record TACInstruction(OpCode opcode, String target, String arg1, String arg2) {
+    public enum OpCode {
+        LOAD_CONST, LOAD_VAR, STORE_VAR, ADD, SUB, MUL, DIV, CALL, RETURN
+    }
+    public void accept(TACVisitor visitor) {
+        visitor.visit(this);
+    }
+}
+```
+
+### ✳️ Step 2 — Define the Visitor Interface
+
+```java
+public interface TACVisitor {
+    void visit(TACInstruction instruction);
+}
+```
+
+---
+
+## ⚙️ **Phase 2: TAC Conversion Pass (Visitor Pattern)**
+
+The goal of this phase is to **walk your AST** and emit TAC instructions using the **Visitor pattern**.
+
+### ✳️ Step 3 — Implement TACConversionPass as an ASTNodeVisitor
+
+```java
+public class TACConversionPass implements ASTNodeVisitor {
+    private final List<TACInstruction> instructions = new ArrayList<>();
+
+    public List<TACInstruction> getInstructions() {
+        return instructions;
+    }
+
+    // Overloaded visit methods for each node type
+    public void visit(AssignmentNode node) {
+        node.getExpression().accept(this);
+        instructions.add(new TACInstruction(TACInstruction.OpCode.STORE_VAR, node.getVariableName(), node.getExpression().toString(), null));
+    }
+
+    public void visit(BinaryOpNode node) {
+        node.getLeft().accept(this);
+        node.getRight().accept(this);
+        instructions.add(new TACInstruction(TACInstruction.OpCode.ADD, "t" + instructions.size(), node.getLeft().toString(), node.getRight().toString()));
+    }
+
+    public void visit(LiteralNode node) {
+        instructions.add(new TACInstruction(TACInstruction.OpCode.LOAD_CONST, "t" + instructions.size(), node.getValue().toString(), null));
+    }
+
+    public List<TACInstruction> convert(ASTNode root) {
+        root.accept(this);
+        return instructions;
+    }
+}
+```
+
+### ✳️ Step 4 — Add `accept` Methods to Your AST Nodes
+
+```java
+public interface ASTNode {
+    void accept(ASTNodeVisitor visitor);
+}
+
+public class AssignmentNode implements ASTNode {
+    private final String variableName;
+    private final ASTNode expression;
+
+    public AssignmentNode(String variableName, ASTNode expression) {
+        this.variableName = variableName;
+        this.expression = expression;
+    }
+
+    public String getVariableName() { return variableName; }
+    public ASTNode getExpression() { return expression; }
+
+    @Override
+    public void accept(ASTNodeVisitor visitor) {
+        if (visitor instanceof TACConversionPass pass) pass.visit(this);
+    }
+}
+
+public class BinaryOpNode implements ASTNode {
+    private final String operator;
+    private final ASTNode left, right;
+
+    public BinaryOpNode(String operator, ASTNode left, ASTNode right) {
+        this.operator = operator;
+        this.left = left;
+        this.right = right;
+    }
+
+    public ASTNode getLeft() { return left; }
+    public ASTNode getRight() { return right; }
+
+    @Override
+    public void accept(ASTNodeVisitor visitor) {
+        if (visitor instanceof TACConversionPass pass) pass.visit(this);
+    }
+}
+
+public class LiteralNode implements ASTNode {
+    private final int value;
+
+    public LiteralNode(int value) { this.value = value; }
+    public int getValue() { return value; }
+
+    @Override
+    public void accept(ASTNodeVisitor visitor) {
+        if (visitor instanceof TACConversionPass pass) pass.visit(this);
+    }
+}
+```
+
+---
+
+## 💬 **Phase 3: Hello World ASM Generation**
+
+Before we dive into converting TAC to bytecode, let’s warm up with a simple ASM example that generates a `HelloWorld.class` file.
+
+### ✳️ Step 5 — Implement HelloWorldASMGenerator
+
+```java
+import org.objectweb.asm.*;
+import static org.objectweb.asm.Opcodes.*;
+
+public class HelloWorldASMGenerator {
+    public static void main(String[] args) throws Exception {
+        ClassWriter cw = new ClassWriter(0);
+        cw.visit(V17, ACC_PUBLIC, "HelloWorld", null, "java/lang/Object", null);
+
+        // Constructor
+        MethodVisitor init = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
+        init.visitCode();
+        init.visitVarInsn(ALOAD, 0);
+        init.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+        init.visitInsn(RETURN);
+        init.visitMaxs(1, 1);
+        init.visitEnd();
+
+        // public static void main(String[] args)
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
+        mv.visitCode();
+
+        // System.out.println("Hello, World!");
+        mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        mv.visitLdcInsn("Hello, World!");
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false);
+
+        mv.visitInsn(RETURN);
+        mv.visitMaxs(2, 1);
+        mv.visitEnd();
+
+        cw.visitEnd();
+
+        // Write class file
+        java.nio.file.Files.write(java.nio.file.Path.of("HelloWorld.class"), cw.toByteArray());
+        System.out.println("Generated HelloWorld.class successfully!");
+    }
+}
+```
+
+### ✅ Run It
+
+```bash
+javac HelloWorldASMGenerator.java
+java HelloWorldASMGenerator
+java HelloWorld
+```
+
+Output:
+
+```
+Hello, World!
+```
+
+---
+
+## 🧪 **Phase 4: Testing**
+
+### ✳️ Step 6 — Write Unit Tests for TAC Pass
+
+```java
+@Test
+public void testSimpleAdditionTAC() {
+    ASTNode node = new AssignmentNode("x", new BinaryOpNode("+", new LiteralNode(5), new LiteralNode(3)));
+    TACConversionPass pass = new TACConversionPass();
+    node.accept(pass);
+    List<TACInstruction> tac = pass.getInstructions();
+
+    assertEquals(3, tac.size());
+    assertEquals(TACInstruction.OpCode.LOAD_CONST, tac.get(0).opcode());
+    assertEquals(TACInstruction.OpCode.ADD, tac.get(2).opcode());
+}
+```
+
+---
+
+## 🧠 **Summary**
+
+Your compiler can now:
+
+1. Walk the AST using a proper **Visitor pattern**.
+2. Convert nodes to **TAC instructions**.
+3. Generate a working `.class` file — starting with **Hello World!**.
+
+> “Don’t fear the stack — embrace it. Byte by byte, we’re building the future.” 🚀
