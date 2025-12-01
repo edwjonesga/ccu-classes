@@ -266,4 +266,3 @@ class Main {
 
 ---
 
-Let me know if you want formatting refinements, color coding, or a printable PDF version!
