@@ -334,7 +334,7 @@ Create a sub-resource `session` you can **PATCH**:
 **Endpoint (add under `paths`):**
 
 ```json
-"/rooms/{roomId}/session": {
+"/rooms/{roomId}/sessions": {
   "patch": {
     "summary": "Update Room Session (action via PATCH)",
     "parameters": [
@@ -395,7 +395,7 @@ Some APIs use custom methods like `POST /rooms/{roomId}:start`. This is pragmati
 
 ### Part 2 — Add the Action example
 
-* Add **either** the REST-y `PATCH /rooms/{roomId}/session` from Step 7 **or** propose your own state action.
+* Add **either** the REST-y `PATCH /rooms/{roomId}/sessions` from Step 7 **or** propose your own state action.
 * Include at least **one** example for request and response.
 
 ### Part 3 — Take-home user stories (design the endpoints)
