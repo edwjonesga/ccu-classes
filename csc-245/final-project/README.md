@@ -68,7 +68,7 @@ Your API must implement **all required endpoints from the class API spec**.
 
 Grading is proportional:
 
-* If there are 20 required endpoints…
+* If there are 15 required endpoints…
 
   * Implementing all 15 → full points
   * Implementing 8 → 50% of these 35 points
