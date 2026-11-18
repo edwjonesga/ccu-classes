@@ -70,9 +70,9 @@ Grading is proportional:
 
 * If there are 20 required endpoints…
 
-  * Implementing all 20 → full points
-  * Implementing 10 → 50% of these 35 points
-  * Implementing 5 → 25% of these 35 points
+  * Implementing all 15 → full points
+  * Implementing 8 → 50% of these 35 points
+  * Implementing 4 → 25% of these 35 points
 
 To count as "implemented":
 
